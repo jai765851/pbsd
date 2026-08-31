@@ -1,4 +1,6 @@
-// Change between sections
+// ========================================
+// SECTION NAVIGATION
+// ========================================
 
 function showSection(sectionName) {
 
@@ -8,47 +10,251 @@ function showSection(sectionName) {
         section.classList.remove("active");
     });
 
-    document.getElementById(sectionName).classList.add("active");
+    const selectedSection =
+        document.getElementById(sectionName);
+
+    if (selectedSection) {
+        selectedSection.classList.add("active");
+    }
+
 }
 
 
-// Search books
+// ========================================
+// LOAD BOOKS FROM MYSQL
+// ========================================
+
+function loadBooks() {
+
+    fetch("get_books.php")
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error("Unable to load books.");
+            }
+
+            return response.json();
+
+        })
+
+        .then(books => {
+
+            const bookList =
+                document.getElementById("bookList");
+
+            bookList.innerHTML = "";
+
+
+            // If there are no books
+
+            if (books.length === 0) {
+
+                bookList.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            No books found.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+
+            // Add books to table
+
+            books.forEach(book => {
+
+                let status;
+
+                if (Number(book.available_copies) > 0) {
+
+                    status =
+                        `<span class="available">
+                            Available
+                        </span>`;
+
+                } else {
+
+                    status =
+                        `<span class="issued">
+                            Issued
+                        </span>`;
+
+                }
+
+
+                const row = `
+
+                    <tr>
+
+                        <td>
+                            B${String(book.book_id).padStart(3, "0")}
+                        </td>
+
+                        <td>
+                            ${book.title}
+                        </td>
+
+                        <td>
+                            ${book.author}
+                        </td>
+
+                        <td>
+                            ${book.category || "N/A"}
+                        </td>
+
+                        <td>
+                            ${status}
+                        </td>
+
+                    </tr>
+
+                `;
+
+
+                bookList.innerHTML += row;
+
+            });
+
+
+            // Update dashboard
+
+            updateDashboard(books);
+
+        })
+
+
+        .catch(error => {
+
+            console.error(
+                "Error loading books:",
+                error
+            );
+
+            const bookList =
+                document.getElementById("bookList");
+
+            bookList.innerHTML = `
+
+                <tr>
+
+                    <td colspan="5">
+
+                        Unable to load books.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+}
+
+
+// ========================================
+// UPDATE DASHBOARD
+// ========================================
+
+function updateDashboard(books) {
+
+    let totalCopies = 0;
+    let availableCopies = 0;
+
+
+    books.forEach(book => {
+
+        totalCopies +=
+            Number(book.total_copies) || 0;
+
+        availableCopies +=
+            Number(book.available_copies) || 0;
+
+    });
+
+
+    const issuedCopies =
+        totalCopies - availableCopies;
+
+
+    document.getElementById("totalBooks")
+        .innerText = totalCopies;
+
+
+    document.getElementById("availableBooks")
+        .innerText = availableCopies;
+
+
+    document.getElementById("issuedBooks")
+        .innerText = issuedCopies;
+
+}
+
+
+// ========================================
+// SEARCH BOOKS
+// ========================================
 
 function searchBooks() {
 
-    const input = document
-        .getElementById("searchBook")
+    const input =
+        document.getElementById("searchBook")
         .value
         .toLowerCase();
 
-    const rows = document.querySelectorAll("#bookTable tbody tr");
+
+    const rows =
+        document.querySelectorAll(
+            "#bookTable tbody tr"
+        );
+
 
     rows.forEach(row => {
 
-        const text = row.innerText.toLowerCase();
+        const text =
+            row.innerText.toLowerCase();
+
 
         if (text.includes(input)) {
+
             row.style.display = "";
+
         } else {
+
             row.style.display = "none";
+
         }
 
     });
+
 }
 
 
-// Issue / Return
+// ========================================
+// ISSUE / RETURN
+// ========================================
 
 function processBook() {
 
     const student =
-        document.getElementById("studentName").value;
+        document.getElementById("studentName")
+        .value
+        .trim();
+
 
     const book =
-        document.getElementById("bookName").value;
+        document.getElementById("bookName")
+        .value
+        .trim();
+
 
     const action =
-        document.getElementById("action").value;
+        document.getElementById("action")
+        .value;
+
 
     const message =
         document.getElementById("message");
@@ -62,63 +268,120 @@ function processBook() {
         message.style.color = "red";
 
         return;
+
     }
 
 
-    message.innerText =
-        book + " has been " + action.toLowerCase() +
-        "ed to/from " + student + ".";
+    if (action === "Issue") {
+
+        message.innerText =
+            `"${book}" has been issued to ${student}.`;
+
+    } else {
+
+        message.innerText =
+            `"${book}" has been returned by ${student}.`;
+
+    }
+
 
     message.style.color = "green";
 
 
-    document.getElementById("studentName").value = "";
-    document.getElementById("bookName").value = "";
+    document.getElementById("studentName")
+        .value = "";
+
+
+    document.getElementById("bookName")
+        .value = "";
+
 }
 
 
-// Add book
+// ========================================
+// ADD BOOK
+// ========================================
 
 function openBookForm() {
 
-    const title = prompt("Enter book title:");
+    const title =
+        prompt("Enter book title:");
 
-    if (title === null || title.trim() === "") {
+
+    if (!title || title.trim() === "") {
+
         return;
+
     }
 
+
     alert(
-        "Book '" + title +
+        "Book '" +
+        title +
         "' added successfully!"
     );
+
 }
 
 
-// Add member
+// ========================================
+// ADD MEMBER
+// ========================================
 
 function addMember() {
 
-    const name = prompt("Enter member name:");
+    const name =
+        prompt("Enter member name:");
 
-    if (name === null || name.trim() === "") {
+
+    if (!name || name.trim() === "") {
+
         return;
+
     }
 
+
     alert(
-        "Member '" + name +
+        "Member '" +
+        name +
         "' added successfully!"
     );
+
 }
 
 
-// Logout
+// ========================================
+// LOGOUT
+// ========================================
 
 function logout() {
 
     const confirmLogout =
-        confirm("Are you sure you want to logout?");
+        confirm(
+            "Are you sure you want to logout?"
+        );
+
 
     if (confirmLogout) {
-        alert("You have been logged out.");
+
+        alert(
+            "You have been logged out."
+        );
+
     }
+
 }
+
+
+// ========================================
+// LOAD DATA WHEN PAGE OPENS
+// ========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadBooks();
+
+    }
+);
