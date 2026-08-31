@@ -3,462 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Library Management System</title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="container-fluid">
-    <div class="row">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>📚 Library</h2>
 
-        <!-- Sidebar -->
-        <div class="col-md-2 sidebar p-0">
+        <nav>
+            <button onclick="showSection('dashboard')">Dashboard</button>
+            <button onclick="showSection('books')">Books</button>
+            <button onclick="showSection('issue')">Issue / Return</button>
+            <button onclick="showSection('members')">Members</button>
+            <button onclick="showSection('fines')">Fines</button>
+        </nav>
 
-            <h4 class="text-white text-center py-4">
-                <i class="bi bi-book"></i>
-                Library
-            </h4>
-
-            <a href="#">
-                <i class="bi bi-speedometer2"></i>
-                Dashboard
-            </a>
-
-            <a href="#">
-                <i class="bi bi-book"></i>
-                Books
-            </a>
-
-            <a href="#">
-                <i class="bi bi-people"></i>
-                Students
-            </a>
-
-            <a href="#">
-                <i class="bi bi-arrow-right-circle"></i>
-                Issue Book
-            </a>
-
-            <a href="#">
-                <i class="bi bi-arrow-left-circle"></i>
-                Return Book
-            </a>
-
-            <a href="#">
-                <i class="bi bi-file-earmark-text"></i>
-                Reports
-            </a>
-
-            <a href="#" class="mt-4">
-                <i class="bi bi-box-arrow-right"></i>
-                Logout
-            </a>
-
-        </div>
+        <button class="logout" onclick="logout()">Logout</button>
+    </aside>
 
 
-        <!-- Main Content -->
-        <div class="col-md-10 content">
+    <!-- Main Content -->
+    <main class="main-content">
 
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-
-                <div>
-                    <h2>Dashboard</h2>
-                    <p class="text-muted">
-                        Welcome to the Library Management System
-                    </p>
-                </div>
-
-                <button class="btn btn-dark">
-                    <i class="bi bi-person-circle"></i>
-                    Admin hello
-                </button>
-
+        <!-- Header -->
+        <header>
+            <div>
+                <h1>Library Management System</h1>
+                <p>Manage books, members and borrowing easily.</p>
             </div>
 
+            <div class="profile">
+                👤 Librarian
+            </div>
+        </header>
 
-            <!-- Statistics -->
-            <div class="row g-4 mb-4">
 
-                <div class="col-md-3">
-                    <div class="card p-3">
-                        <div class="d-flex justify-content-between">
+        <!-- Dashboard -->
+        <section id="dashboard" class="section active">
 
-                            <div>
-                                <h6 class="text-muted">
-                                    Total Books
-                                </h6>
+            <h2>Dashboard</h2>
 
-                                <h3>1,250</h3>
-                            </div>
+            <div class="cards">
 
-                            <div class="stat-icon">
-                                <i class="bi bi-book"></i>
-                            </div>
-
-                        </div>
+                <div class="card">
+                    <span>📚</span>
+                    <div>
+                        <h3 id="totalBooks">120</h3>
+                        <p>Total Books</p>
                     </div>
                 </div>
 
-
-                <div class="col-md-3">
-                    <div class="card p-3">
-                        <div class="d-flex justify-content-between">
-
-                            <div>
-                                <h6 class="text-muted">
-                                    Students
-                                </h6>
-
-                                <h3>450</h3>
-                            </div>
-
-                            <div class="stat-icon">
-                                <i class="bi bi-people"></i>
-                            </div>
-
-                        </div>
+                <div class="card">
+                    <span>📖</span>
+                    <div>
+                        <h3 id="availableBooks">95</h3>
+                        <p>Available Books</p>
                     </div>
                 </div>
 
-
-                <div class="col-md-3">
-                    <div class="card p-3">
-                        <div class="d-flex justify-content-between">
-
-                            <div>
-                                <h6 class="text-muted">
-                                    Issued Books
-                                </h6>
-
-                                <h3>82</h3>
-                            </div>
-
-                            <div class="stat-icon">
-                                <i class="bi bi-arrow-right-circle"></i>
-                            </div>
-
-                        </div>
+                <div class="card">
+                    <span>🔄</span>
+                    <div>
+                        <h3 id="issuedBooks">25</h3>
+                        <p>Issued Books</p>
                     </div>
                 </div>
 
-
-                <div class="col-md-3">
-                    <div class="card p-3">
-                        <div class="d-flex justify-content-between">
-
-                            <div>
-                                <h6 class="text-muted">
-                                    Overdue
-                                </h6>
-
-                                <h3>12</h3>
-                            </div>
-
-                            <div class="stat-icon">
-                                <i class="bi bi-exclamation-circle"></i>
-                            </div>
-
-                        </div>
+                <div class="card">
+                    <span>👨‍🎓</span>
+                    <div>
+                        <h3>80</h3>
+                        <p>Members</p>
                     </div>
                 </div>
 
             </div>
 
+            <div class="recent">
+                <h2>Recent Activities</h2>
 
-            <!-- Search and Add Book -->
-            <div class="card p-4 mb-4">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Book</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
 
-                <div class="row">
+                    <tbody>
+                        <tr>
+                            <td>Arun</td>
+                            <td>Java Programming</td>
+                            <td>31 Aug 2026</td>
+                            <td><span class="issued">Issued</span></td>
+                        </tr>
 
-                    <div class="col-md-8">
+                        <tr>
+                            <td>Priya</td>
+                            <td>Database Systems</td>
+                            <td>30 Aug 2026</td>
+                            <td><span class="returned">Returned</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                        <label class="form-label">
-                            Search Books
-                        </label>
+        </section>
 
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="Search by title, author or ISBN"
-                        >
 
-                    </div>
+        <!-- Books -->
+        <section id="books" class="section">
 
-                    <div class="col-md-4 d-flex align-items-end">
+            <div class="section-heading">
+                <h2>Book Management</h2>
+                <button onclick="openBookForm()">+ Add Book</button>
+            </div>
 
-                        <button
-                            class="btn btn-primary w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addBookModal">
+            <input
+                type="text"
+                id="searchBook"
+                placeholder="🔍 Search books..."
+                onkeyup="searchBooks()"
+            >
 
-                            <i class="bi bi-plus-circle"></i>
-                            Add New Book
+            <table id="bookTable">
 
-                        </button>
+                <thead>
+                    <tr>
+                        <th>Book ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
 
-                    </div>
+                <tbody>
 
-                </div>
+                    <tr>
+                        <td>B001</td>
+                        <td>Java Programming</td>
+                        <td>Herbert Schildt</td>
+                        <td>Programming</td>
+                        <td><span class="available">Available</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>B002</td>
+                        <td>Database Systems</td>
+                        <td>Raghu Ramakrishnan</td>
+                        <td>Database</td>
+                        <td><span class="issued">Issued</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>B003</td>
+                        <td>Computer Networks</td>
+                        <td>Andrew Tanenbaum</td>
+                        <td>Networking</td>
+                        <td><span class="available">Available</span></td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- Issue / Return -->
+        <section id="issue" class="section">
+
+            <h2>Issue / Return Books</h2>
+
+            <div class="form-box">
+
+                <label>Student Name</label>
+                <input type="text" id="studentName" placeholder="Enter student name">
+
+                <label>Book Name</label>
+                <input type="text" id="bookName" placeholder="Enter book name">
+
+                <label>Action</label>
+
+                <select id="action">
+                    <option value="Issue">Issue Book</option>
+                    <option value="Return">Return Book</option>
+                </select>
+
+                <button onclick="processBook()">Submit</button>
+
+                <p id="message"></p>
 
             </div>
 
-
-            <!-- Books Table -->
-            <div class="card p-4">
-
-                <div class="d-flex justify-content-between mb-3">
-
-                    <h4>Books</h4>
-
-                    <button class="btn btn-outline-dark">
-                        View All
-                    </button>
-
-                </div>
+        </section>
 
 
-                <div class="table-responsive">
+        <!-- Members -->
+        <section id="members" class="section">
 
-                    <table class="table table-hover align-middle">
-
-                        <thead class="table-dark">
-
-                            <tr>
-                                <th>ID</th>
-                                <th>Book Name</th>
-                                <th>Author</th>
-                                <th>Category</th>
-                                <th>Available</th>
-                                <th>Action</th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <tr>
-                                <td>101</td>
-                                <td>Java Programming</td>
-                                <td>Herbert Schildt</td>
-                                <td>Programming</td>
-                                <td>
-                                    <span class="badge bg-success">
-                                        Available
-                                    </span>
-                                </td>
-
-                                <td>
-
-                                    <button class="btn btn-sm btn-primary">
-                                        Issue
-                                    </button>
-
-                                    <button class="btn btn-sm btn-warning">
-                                        Edit
-                                    </button>
-
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td>102</td>
-                                <td>Database System Concepts</td>
-                                <td>Abraham Silberschatz</td>
-                                <td>Database</td>
-
-                                <td>
-                                    <span class="badge bg-success">
-                                        Available
-                                    </span>
-                                </td>
-
-                                <td>
-
-                                    <button class="btn btn-sm btn-primary">
-                                        Issue
-                                    </button>
-
-                                    <button class="btn btn-sm btn-warning">
-                                        Edit
-                                    </button>
-
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td>103</td>
-                                <td>Web Development</td>
-                                <td>Jon Duckett</td>
-                                <td>Web</td>
-
-                                <td>
-                                    <span class="badge bg-danger">
-                                        Not Available
-                                    </span>
-                                </td>
-
-                                <td>
-
-                                    <button
-                                        class="btn btn-sm btn-secondary"
-                                        disabled>
-                                        Issue
-                                    </button>
-
-                                    <button class="btn btn-sm btn-warning">
-                                        Edit
-                                    </button>
-
-                                </td>
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
+            <div class="section-heading">
+                <h2>Members</h2>
+                <button onclick="addMember()">+ Add Member</button>
             </div>
 
-        </div>
+            <table>
 
-    </div>
-</div>
+                <thead>
+                    <tr>
+                        <th>Member ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Books Issued</th>
+                    </tr>
+                </thead>
 
+                <tbody>
 
-<!-- Add Book Modal -->
+                    <tr>
+                        <td>M001</td>
+                        <td>Arun</td>
+                        <td>Computer Science</td>
+                        <td>2</td>
+                    </tr>
 
-<div class="modal fade" id="addBookModal" tabindex="-1">
+                    <tr>
+                        <td>M002</td>
+                        <td>Priya</td>
+                        <td>Information Technology</td>
+                        <td>1</td>
+                    </tr>
 
-    <div class="modal-dialog">
+                </tbody>
 
-        <div class="modal-content">
+            </table>
 
-            <div class="modal-header">
-
-                <h5 class="modal-title">
-                    Add New Book
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
-                </button>
-
-            </div>
-
-
-            <div class="modal-body">
-
-                <form>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Book Name
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="Enter book name">
-
-                    </div>
+        </section>
 
 
-                    <div class="mb-3">
+        <!-- Fines -->
+        <section id="fines" class="section">
 
-                        <label class="form-label">
-                            Author
-                        </label>
+            <h2>Fine Management</h2>
 
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="Enter author name">
+            <table>
 
-                    </div>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Book</th>
+                        <th>Late Days</th>
+                        <th>Fine</th>
+                    </tr>
+                </thead>
 
+                <tbody>
 
-                    <div class="mb-3">
+                    <tr>
+                        <td>Rahul</td>
+                        <td>Python Basics</td>
+                        <td>5</td>
+                        <td>₹50</td>
+                    </tr>
 
-                        <label class="form-label">
-                            Category
-                        </label>
+                    <tr>
+                        <td>Anu</td>
+                        <td>Operating Systems</td>
+                        <td>2</td>
+                        <td>₹20</td>
+                    </tr>
 
-                        <select class="form-select">
+                </tbody>
 
-                            <option>Select Category</option>
-                            <option>Programming</option>
-                            <option>Database</option>
-                            <option>Web Development</option>
-                            <option>Science</option>
-                            <option>Management</option>
+            </table>
 
-                        </select>
+        </section>
 
-                    </div>
+    </main>
 
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Quantity
-                        </label>
-
-                        <input
-                            type="number"
-                            class="form-control"
-                            min="1">
-
-                    </div>
-
-                </form>
-
-            </div>
-
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal">
-                    Cancel
-                </button>
-
-                <button
-                    type="button"
-                    class="btn btn-primary">
-                    Add Book
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- Bootstrap JavaScript -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
