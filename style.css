@@ -1,0 +1,454 @@
+/* =========================================
+   LIBRARY MANAGEMENT SYSTEM
+   PROFESSIONAL CSS
+   ========================================= */
+
+
+/* ---------- General ---------- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f7fb;
+    color: #212529;
+}
+
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #172554, #1e3a8a);
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.08);
+    padding-top: 10px;
+}
+
+.sidebar h4 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+}
+
+.sidebar h4 i {
+    margin-right: 8px;
+}
+
+
+/* Sidebar Links */
+
+.sidebar a {
+    color: #dbeafe;
+    text-decoration: none;
+    display: block;
+    padding: 13px 20px;
+    margin: 4px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+    font-size: 17px;
+}
+
+
+/* Hover Effect */
+
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    transform: translateX(4px);
+}
+
+
+/* Active Menu */
+
+.sidebar a:first-of-type {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+
+
+/* Logout */
+
+.sidebar a:last-child {
+    color: #fecaca;
+}
+
+.sidebar a:last-child:hover {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #ffffff;
+}
+
+
+/* ---------- Main Content ---------- */
+
+.content {
+    padding: 30px;
+}
+
+
+/* ---------- Header ---------- */
+
+.content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #172554;
+}
+
+.content p {
+    margin-top: 5px;
+}
+
+
+/* Admin Button */
+
+.content > .d-flex > button {
+    background: #ffffff;
+    color: #172554;
+    border: 1px solid #dbe3ef;
+    padding: 9px 18px;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.content > .d-flex > button:hover {
+    background: #172554;
+    color: #ffffff;
+}
+
+
+/* ---------- Cards ---------- */
+
+.card {
+    border: none;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.08);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 7px 22px rgba(30, 58, 138, 0.12);
+}
+
+
+/* ---------- Statistics Cards ---------- */
+
+.row.g-4 .card {
+    min-height: 125px;
+}
+
+.row.g-4 .card h6 {
+    color: #64748b !important;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.row.g-4 .card h3 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #172554;
+}
+
+
+/* Statistics Icons */
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px !important;
+}
+
+
+/* Different statistic icons */
+
+.row.g-4 > div:nth-child(2) .stat-icon {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.row.g-4 > div:nth-child(3) .stat-icon {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.row.g-4 > div:nth-child(4) .stat-icon {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+
+/* ---------- Search Section ---------- */
+
+.card.p-4.mb-4 {
+    margin-top: 10px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid #dbe3ef;
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* Search Button */
+
+.btn-primary {
+    background: #2563eb;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+
+/* ---------- Books Section ---------- */
+
+.card h4 {
+    color: #172554;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+
+/* View All Button */
+
+.btn-outline-dark {
+    border-color: #dbe3ef;
+    color: #475569;
+    border-radius: 7px;
+    font-size: 13px;
+}
+
+.btn-outline-dark:hover {
+    background: #172554;
+    border-color: #172554;
+}
+
+
+/* ---------- Table ---------- */
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead {
+    background: #172554;
+}
+
+.table thead th {
+    background: #172554;
+    color: #ffffff;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 14px 12px;
+}
+
+.table tbody td {
+    padding: 14px 12px;
+    color: #475569;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #eef2f7;
+    transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+
+/* ---------- Status Badges ---------- */
+
+.badge {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge.bg-success {
+    background-color: #dcfce7 !important;
+    color: #15803d;
+}
+
+.badge.bg-danger {
+    background-color: #fee2e2 !important;
+    color: #b91c1c;
+}
+
+
+/* ---------- Table Buttons ---------- */
+
+.table .btn {
+    border-radius: 6px;
+    font-size: 12px;
+    padding: 5px 10px;
+    margin-right: 3px;
+}
+
+.table .btn-primary {
+    background: #2563eb;
+}
+
+.table .btn-warning {
+    background: #f59e0b;
+    color: #ffffff;
+    border: none;
+}
+
+.table .btn-warning:hover {
+    background: #d97706;
+}
+
+.table .btn-secondary {
+    background: #94a3b8;
+    border: none;
+}
+
+
+/* ---------- Modal ---------- */
+
+.modal-content {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background: #172554;
+    color: #ffffff;
+    border-radius: 14px 14px 0 0;
+    padding: 18px 22px;
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-footer {
+    border-top: 1px solid #eef2f7;
+    padding: 15px 22px;
+}
+
+
+/* ---------- Responsive Design ---------- */
+
+@media (max-width: 992px) {
+
+    .sidebar {
+        min-height: auto;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .sidebar a {
+        display: inline-block;
+        margin: 3px;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .content {
+        padding: 15px;
+    }
+
+    .content h2 {
+        font-size: 23px;
+    }
+
+    .content > .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+    }
+
+    .content > .d-flex > button {
+        width: 100%;
+    }
+
+    .table {
+        min-width: 700px;
+    }
+
+    .card {
+        margin-bottom: 15px;
+    }
+}
+
+
+@media (max-width: 576px) {
+
+    .sidebar {
+        text-align: center;
+    }
+
+    .sidebar h4 {
+        font-size: 20px;
+    }
+
+    .sidebar a {
+        font-size: 13px;
+        padding: 9px 12px;
+    }
+
+    .content {
+        padding: 12px;
+    }
+
+    .row.g-4 .card {
+        min-height: 110px;
+    }
+}
