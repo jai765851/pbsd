@@ -121,4 +121,4 @@ function logout() {
     if (confirmLogout) {
         alert("You have been logged out.");
     }
-}
+} 
