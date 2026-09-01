@@ -1,372 +1,696 @@
-// ========================================
-// SECTION NAVIGATION
-// ========================================
+// Sample/mock data for the frontend only.
+// No backend or database is connected.
 
-function showSection(sectionName) {
+let books = [
+    {
+        id: "B001",
+        title: "Introduction to Python",
+        author: "Mark Lutz",
+        status: "available",
+        user: ""
+    },
+    {
+        id: "B002",
+        title: "Database System Concepts",
+        author: "Abraham Silberschatz",
+        status: "borrowed",
+        user: "Student A"
+    },
+    {
+        id: "B003",
+        title: "Computer Networks",
+        author: "Andrew S. Tanenbaum",
+        status: "available",
+        user: ""
+    },
+    {
+        id: "B004",
+        title: "Software Engineering",
+        author: "Ian Sommerville",
+        status: "borrowed",
+        user: "Student B"
+    },
+    {
+        id: "B005",
+        title: "Data Structures and Algorithms",
+        author: "Robert Lafore",
+        status: "available",
+        user: ""
+    }
+];
 
-    const sections = document.querySelectorAll(".section");
+let returnedBooks = [];
 
-    sections.forEach(section => {
-        section.classList.remove("active");
+let fines = [
+    {
+        book: "Database System Concepts",
+        user: "Student A",
+        daysOverdue: 4,
+        fine: 40
+    },
+    {
+        book: "Software Engineering",
+        user: "Student B",
+        daysOverdue: 2,
+        fine: 20
+    }
+];
+
+const loginPage = document.getElementById("login-page");
+const app = document.getElementById("app");
+const loginForm = document.getElementById("login-form");
+const loginMessage = document.getElementById("login-message");
+const profileName = document.getElementById("profile-name");
+
+const navItems = document.querySelectorAll(".nav-item");
+const sections = document.querySelectorAll(".page-section");
+
+const sidebar = document.getElementById("sidebar");
+const menuToggle = document.getElementById("menu-toggle");
+
+const bookSearch = document.getElementById("book-search");
+const availabilityFilter = document.getElementById("availability-filter");
+
+const bookTableBody = document.getElementById("book-table-body");
+const availabilityTableBody = document.getElementById("availability-table-body");
+const issuedTableBody = document.getElementById("issued-table-body");
+const returnedTableBody = document.getElementById("returned-table-body");
+const fineTableBody = document.getElementById("fine-table-body");
+
+const issueBookSelect = document.getElementById("issue-book");
+const returnBookSelect = document.getElementById("return-book");
+
+const issueForm = document.getElementById("issue-form");
+const returnForm = document.getElementById("return-form");
+
+const issueMessage = document.getElementById("issue-message");
+const returnMessage = document.getElementById("return-message");
+
+const bookModal = document.getElementById("book-modal");
+const addBookButton = document.getElementById("add-book-button");
+const closeModal = document.getElementById("close-modal");
+const cancelModal = document.getElementById("cancel-modal");
+const addBookForm = document.getElementById("add-book-form");
+
+
+// Login
+loginForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    // Frontend-only demonstration of authentication.
+    // Any non-empty credentials are accepted because no backend exists yet.
+    if (username && password) {
+        loginPage.classList.add("hidden");
+        app.classList.remove("hidden");
+
+        profileName.textContent = username;
+        loginMessage.textContent = "";
+
+        renderAll();
+    } else {
+        loginMessage.textContent = "Please enter valid login credentials.";
+    }
+});
+
+
+// Navigation
+navItems.forEach(function (item) {
+    item.addEventListener("click", function () {
+
+        const sectionId = item.dataset.section;
+
+        navItems.forEach(function (nav) {
+            nav.classList.remove("active");
+        });
+
+        sections.forEach(function (section) {
+            section.classList.remove("active-section");
+        });
+
+        item.classList.add("active");
+
+        document
+            .getElementById(sectionId)
+            .classList.add("active-section");
+
+        sidebar.classList.remove("open");
+    });
+});
+
+
+// Mobile sidebar
+menuToggle.addEventListener("click", function () {
+    sidebar.classList.toggle("open");
+});
+
+
+// Search books
+bookSearch.addEventListener("input", function () {
+    renderBookTable(bookSearch.value);
+});
+
+
+// Availability filter
+availabilityFilter.addEventListener("change", function () {
+    renderAvailabilityTable();
+});
+
+
+// Add book
+addBookButton.addEventListener("click", function () {
+    bookModal.classList.remove("hidden");
+});
+
+closeModal.addEventListener("click", closeBookModal);
+cancelModal.addEventListener("click", closeBookModal);
+
+function closeBookModal() {
+    bookModal.classList.add("hidden");
+    addBookForm.reset();
+}
+
+addBookForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+    const title = document
+        .getElementById("new-book-title")
+        .value
+        .trim();
+
+    const author = document
+        .getElementById("new-book-author")
+        .value
+        .trim();
+
+    const newId =
+        "B" + String(books.length + 1).padStart(3, "0");
+
+    books.push({
+        id: newId,
+        title: title,
+        author: author,
+        status: "available",
+        user: ""
     });
 
-    const selectedSection =
-        document.getElementById(sectionName);
+    closeBookModal();
 
-    if (selectedSection) {
-        selectedSection.classList.add("active");
+    renderAll();
+});
+
+
+// Issue book
+issueForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+    const bookId = issueBookSelect.value;
+
+    const user = document
+        .getElementById("issue-user")
+        .value
+        .trim();
+
+    const book = books.find(function (item) {
+        return item.id === bookId;
+    });
+
+    if (!book || book.status !== "available") {
+
+        issueMessage.textContent =
+            "The selected book is not available.";
+
+        return;
     }
 
+    book.status = "borrowed";
+    book.user = user;
+
+    issueMessage.style.color = "#15803d";
+
+    issueMessage.textContent =
+        "Book issue recorded successfully.";
+
+    issueForm.reset();
+
+    renderAll();
+});
+
+
+// Return book
+returnForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+    const bookId = returnBookSelect.value;
+
+    const book = books.find(function (item) {
+        return item.id === bookId;
+    });
+
+    if (!book || book.status !== "borrowed") {
+
+        returnMessage.textContent =
+            "The selected book is not currently borrowed.";
+
+        return;
+    }
+
+    returnedBooks.push({
+        book: book.title,
+        user: book.user
+    });
+
+    book.status = "available";
+    book.user = "";
+
+    returnMessage.style.color = "#15803d";
+
+    returnMessage.textContent =
+        "Book return recorded successfully.";
+
+    returnForm.reset();
+
+    renderAll();
+});
+
+
+// Fine calculation
+function calculateFine(index) {
+
+    const record = fines[index];
+
+    // Sample frontend calculation.
+    // ₹10 per overdue day.
+    record.fine = record.daysOverdue * 10;
+
+    renderFineTable();
 }
 
 
-// ========================================
-// LOAD BOOKS FROM MYSQL
-// ========================================
+// Render everything
+function renderAll() {
 
-function loadBooks() {
+    updateSummary();
 
-    fetch("get_books.php")
+    renderBookTable(bookSearch.value);
 
-        .then(response => {
+    renderAvailabilityTable();
 
-            if (!response.ok) {
-                throw new Error("Unable to load books.");
-            }
+    renderIssueSelect();
 
-            return response.json();
+    renderReturnSelect();
 
-        })
+    renderIssuedTable();
 
-        .then(books => {
+    renderReturnedTable();
 
-            const bookList =
-                document.getElementById("bookList");
-
-            bookList.innerHTML = "";
+    renderFineTable();
+}
 
 
-            // If there are no books
+// Summary cards
+function updateSummary() {
 
-            if (books.length === 0) {
+    const total = books.length;
 
-                bookList.innerHTML = `
-                    <tr>
-                        <td colspan="5">
-                            No books found.
-                        </td>
-                    </tr>
-                `;
+    const available = books.filter(function (book) {
+        return book.status === "available";
+    }).length;
 
-                return;
-            }
+    const borrowed = books.filter(function (book) {
+        return book.status === "borrowed";
+    }).length;
 
+    document.getElementById("total-books").textContent =
+        total;
 
-            // Add books to table
+    document.getElementById("available-books").textContent =
+        available;
 
-            books.forEach(book => {
+    document.getElementById("borrowed-books").textContent =
+        borrowed;
 
-                let status;
-
-                if (Number(book.available_copies) > 0) {
-
-                    status =
-                        `<span class="available">
-                            Available
-                        </span>`;
-
-                } else {
-
-                    status =
-                        `<span class="issued">
-                            Issued
-                        </span>`;
-
-                }
+    document.getElementById("overdue-books").textContent =
+        fines.length;
+}
 
 
-                const row = `
+// Book management table
+function renderBookTable(searchText = "") {
 
-                    <tr>
+    const search = searchText.toLowerCase();
 
-                        <td>
-                            B${String(book.book_id).padStart(3, "0")}
-                        </td>
+    const filteredBooks = books.filter(function (book) {
 
-                        <td>
-                            ${book.title}
-                        </td>
+        return (
+            book.title.toLowerCase().includes(search) ||
+            book.author.toLowerCase().includes(search)
+        );
 
-                        <td>
-                            ${book.author}
-                        </td>
+    });
 
-                        <td>
-                            ${book.category || "N/A"}
-                        </td>
+    if (filteredBooks.length === 0) {
 
-                        <td>
-                            ${status}
-                        </td>
+        bookTableBody.innerHTML = `
+            <tr>
+                <td colspan="5">No books found.</td>
+            </tr>
+        `;
 
-                    </tr>
+        return;
+    }
 
-                `;
+    bookTableBody.innerHTML =
+        filteredBooks.map(function (book) {
+
+            return `
+                <tr>
+                    <td>${book.id}</td>
+
+                    <td>
+                        <strong>${book.title}</strong>
+                    </td>
+
+                    <td>${book.author}</td>
+
+                    <td>
+                        ${statusBadge(book.status)}
+                    </td>
+
+                    <td>
+                        <button
+                            class="table-action"
+                            onclick="updateBook('${book.id}')">
+                            Update
+                        </button>
+
+                        <button
+                            class="table-action"
+                            onclick="deleteBook('${book.id}')">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+        }).join("");
+}
 
 
-                bookList.innerHTML += row;
+// Update book
+function updateBook(bookId) {
 
-            });
+    const book = books.find(function (item) {
+        return item.id === bookId;
+    });
+
+    if (!book) {
+        return;
+    }
+
+    const newTitle = prompt(
+        "Enter updated book title:",
+        book.title
+    );
+
+    if (newTitle === null || !newTitle.trim()) {
+        return;
+    }
+
+    const newAuthor = prompt(
+        "Enter updated author:",
+        book.author
+    );
+
+    if (newAuthor === null || !newAuthor.trim()) {
+        return;
+    }
+
+    book.title = newTitle.trim();
+
+    book.author = newAuthor.trim();
+
+    renderAll();
+}
 
 
-            // Update dashboard
+// Delete book
+function deleteBook(bookId) {
 
-            updateDashboard(books);
+    const book = books.find(function (item) {
+        return item.id === bookId;
+    });
 
-        })
+    if (!book) {
+        return;
+    }
+
+    if (book.status === "borrowed") {
+
+        alert(
+            "A borrowed book cannot be deleted in this sample interface."
+        );
+
+        return;
+    }
+
+    books = books.filter(function (item) {
+        return item.id !== bookId;
+    });
+
+    renderAll();
+}
 
 
-        .catch(error => {
+// Issue select
+function renderIssueSelect() {
 
-            console.error(
-                "Error loading books:",
-                error
-            );
+    const availableBooks = books.filter(function (book) {
+        return book.status === "available";
+    });
 
-            const bookList =
-                document.getElementById("bookList");
+    issueBookSelect.innerHTML = availableBooks.length
 
-            bookList.innerHTML = `
+        ? availableBooks.map(function (book) {
 
+            return `
+                <option value="${book.id}">
+                    ${book.title}
+                </option>
+            `;
+
+        }).join("")
+
+        : `<option value="">No available books</option>`;
+}
+
+
+// Return select
+function renderReturnSelect() {
+
+    const borrowedBooks = books.filter(function (book) {
+        return book.status === "borrowed";
+    });
+
+    returnBookSelect.innerHTML = borrowedBooks.length
+
+        ? borrowedBooks.map(function (book) {
+
+            return `
+                <option value="${book.id}">
+                    ${book.title}
+                </option>
+            `;
+
+        }).join("")
+
+        : `<option value="">No borrowed books</option>`;
+}
+
+
+// Issued books table
+function renderIssuedTable() {
+
+    const issuedBooks = books.filter(function (book) {
+        return book.status === "borrowed";
+    });
+
+    issuedTableBody.innerHTML = issuedBooks.length
+
+        ? issuedBooks.map(function (book) {
+
+            return `
+                <tr>
+                    <td>${book.title}</td>
+
+                    <td>${book.user}</td>
+
+                    <td>
+                        ${statusBadge("borrowed")}
+                    </td>
+                </tr>
+            `;
+
+        }).join("")
+
+        : `
+            <tr>
+                <td colspan="3">
+                    No borrowed books.
+                </td>
+            </tr>
+        `;
+}
+
+
+// Returned books table
+function renderReturnedTable() {
+
+    returnedTableBody.innerHTML = returnedBooks.length
+
+        ? returnedBooks.map(function (record) {
+
+            return `
+                <tr>
+                    <td>${record.book}</td>
+
+                    <td>${record.user}</td>
+
+                    <td>
+                        ${statusBadge("available")}
+                    </td>
+                </tr>
+            `;
+
+        }).join("")
+
+        : `
+            <tr>
+                <td colspan="3">
+                    No returned books recorded in this session.
+                </td>
+            </tr>
+        `;
+}
+
+
+// Fine table
+function renderFineTable() {
+
+    fineTableBody.innerHTML = fines.length
+
+        ? fines.map(function (record, index) {
+
+            return `
                 <tr>
 
-                    <td colspan="5">
+                    <td>${record.book}</td>
 
-                        Unable to load books.
+                    <td>${record.user}</td>
 
+                    <td>${record.daysOverdue}</td>
+
+                    <td>₹${record.fine}</td>
+
+                    <td>
+                        <button
+                            class="table-action"
+                            onclick="calculateFine(${index})">
+                            Calculate
+                        </button>
                     </td>
 
                 </tr>
-
             `;
 
-        });
+        }).join("")
 
+        : `
+            <tr>
+                <td colspan="5">
+                    No overdue books.
+                </td>
+            </tr>
+        `;
 }
 
 
-// ========================================
-// UPDATE DASHBOARD
-// ========================================
+// Availability table
+function renderAvailabilityTable() {
 
-function updateDashboard(books) {
+    const filter = availabilityFilter.value;
 
-    let totalCopies = 0;
-    let availableCopies = 0;
+    const filteredBooks = books.filter(function (book) {
 
-
-    books.forEach(book => {
-
-        totalCopies +=
-            Number(book.total_copies) || 0;
-
-        availableCopies +=
-            Number(book.available_copies) || 0;
+        return (
+            filter === "all" ||
+            book.status === filter
+        );
 
     });
 
+    availabilityTableBody.innerHTML =
+        filteredBooks.length
 
-    const issuedCopies =
-        totalCopies - availableCopies;
+            ? filteredBooks.map(function (book) {
 
+                return `
+                    <tr>
 
-    document.getElementById("totalBooks")
-        .innerText = totalCopies;
+                        <td>${book.id}</td>
 
+                        <td>${book.title}</td>
 
-    document.getElementById("availableBooks")
-        .innerText = availableCopies;
+                        <td>${book.author}</td>
 
+                        <td>
+                            ${statusBadge(book.status)}
+                        </td>
 
-    document.getElementById("issuedBooks")
-        .innerText = issuedCopies;
+                    </tr>
+                `;
 
+            }).join("")
+
+            : `
+                <tr>
+                    <td colspan="4">
+                        No books found.
+                    </td>
+                </tr>
+            `;
 }
 
 
-// ========================================
-// SEARCH BOOKS
-// ========================================
+// Status badge
+function statusBadge(status) {
 
-function searchBooks() {
+    if (status === "available") {
 
-    const input =
-        document.getElementById("searchBook")
-        .value
-        .toLowerCase();
-
-
-    const rows =
-        document.querySelectorAll(
-            "#bookTable tbody tr"
-        );
-
-
-    rows.forEach(row => {
-
-        const text =
-            row.innerText.toLowerCase();
-
-
-        if (text.includes(input)) {
-
-            row.style.display = "";
-
-        } else {
-
-            row.style.display = "none";
-
-        }
-
-    });
-
-}
-
-
-// ========================================
-// ISSUE / RETURN
-// ========================================
-
-function processBook() {
-
-    const student =
-        document.getElementById("studentName")
-        .value
-        .trim();
-
-
-    const book =
-        document.getElementById("bookName")
-        .value
-        .trim();
-
-
-    const action =
-        document.getElementById("action")
-        .value;
-
-
-    const message =
-        document.getElementById("message");
-
-
-    if (student === "" || book === "") {
-
-        message.innerText =
-            "Please enter student and book details.";
-
-        message.style.color = "red";
-
-        return;
-
+        return `
+            <span class="status available">
+                Available
+            </span>
+        `;
     }
 
+    if (status === "borrowed") {
 
-    if (action === "Issue") {
-
-        message.innerText =
-            `"${book}" has been issued to ${student}.`;
-
-    } else {
-
-        message.innerText =
-            `"${book}" has been returned by ${student}.`;
-
+        return `
+            <span class="status borrowed">
+                Borrowed
+            </span>
+        `;
     }
 
-
-    message.style.color = "green";
-
-
-    document.getElementById("studentName")
-        .value = "";
-
-
-    document.getElementById("bookName")
-        .value = "";
-
-}
-
-
-// ========================================
-// ADD BOOK
-// ========================================
-
-function openBookForm() {
-
-    const title =
-        prompt("Enter book title:");
-
-
-    if (!title || title.trim() === "") {
-
-        return;
-
-    }
-
-
-    alert(
-        "Book '" +
-        title +
-        "' added successfully!"
-    );
-
-}
-
-
-// ========================================
-// ADD MEMBER
-// ========================================
-
-function addMember() {
-
-    const name =
-        prompt("Enter member name:");
-
-
-    if (!name || name.trim() === "") {
-
-        return;
-
-    }
-
-
-    alert(
-        "Member '" +
-        name +
-        "' added successfully!"
-    );
-
-}
-
-
-// ========================================
-// LOGOUT
-// ========================================
-
-function logout() {
-
-    const confirmLogout =
-        confirm(
-            "Are you sure you want to logout?"
-        );
-
-
-    if (confirmLogout) {
-
-        alert(
-            "You have been logged out."
-        );
-
-    }
+    return `
+        <span class="status overdue">
+            Overdue
+        </span>
+    `;
 }
