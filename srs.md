@@ -1,44 +1,61 @@
-1. Purpose and Scope
-Purpose
 
-The purpose of the Library Management System is to provide a simple system for managing users, books, members, book issues, returns, and fines using a centralized database.
 
-In Scope
-Student and librarian login.
-Adding, editing, deleting, and searching books.
-Adding, editing, and removing library members.
-Recording issued books and due dates.
-Recording returned books and updating availability.
-Calculating fines for overdue books.
-Out of Scope
-Features not listed in the requirements.
-Integration with external library systems or services.
-Online payment processing.
-Mobile application development.
+## 1. Purpose and Scope
 
-2. Functional Requirements
-FR-01: The system shall allow students and librarians to log in securely.
-FR-02: The system shall allow users to add, edit, delete, and search books.
-FR-03: The system shall allow users to add, edit, and remove library members.
-FR-04: The system shall record books issued to members and their due dates.
-FR-05: The system shall record returned books and update their availability.
-FR-06: The system shall calculate fines for overdue books.
+### Purpose
 
-3. Non-Functional Requirements
-NFR-01: The system shall complete standard operations within 2 seconds under normal usage.
-NFR-02: The system shall require valid login credentials and allow access only to authenticated users.
-NFR-03: The system shall provide clear labels and navigation so that a new user can perform basic operations within 5 minutes of use.
-NFR-04: The system shall maintain 99% data consistency during normal database operations.
+The purpose of the Library Management System is to provide a simple system for managing user access, books, book issues, returns, fines, and book availability.
 
-4. Assumptions
-Users have valid login credentials.
-The system is used by students and librarians.
-Book and member information is entered correctly by authorized users.
-The system runs on a computer with Python and SQLite installed.
-The library uses a single local database.
+### In Scope
 
-5. Constraints
-The system shall be developed using Python.
-SQLite shall be used as the database.
-The project is limited to the six specified features.
-The first version is intended for a small college project and local use.
+* User login
+* Book management
+* Book issue
+* Book return
+* Fine management
+* Book availability
+
+### Out of Scope
+
+* Online payment
+* Email or SMS notifications
+* Online book reservation
+* Integration with external library systems
+
+## 2. Functional Requirements
+
+**FR-01:** The system shall allow users to securely log in to the library management system.
+
+**FR-02:** The system shall allow authorized users to add, update, delete, and search library books.
+
+**FR-03:** The system shall record books issued to users and update their availability.
+
+**FR-04:** The system shall record returned books and update their status.
+
+**FR-05:** The system shall calculate fines for overdue books.
+
+**FR-06:** The system shall allow users to check available and borrowed books.
+
+## 3. Non-Functional Requirements
+
+**NFR-01:** The system shall complete normal operations within **2 seconds**.
+
+**NFR-02:** The system shall allow only authenticated users to access the system within **1 login attempt using valid credentials**.
+
+**NFR-03:** The system shall allow users to access the main functions with **no more than 3 steps** from the main menu.
+
+**NFR-04:** The system shall maintain **99% data reliability** during normal operation.
+
+## 4. Assumptions
+
+* Users have valid login credentials.
+* Book information is entered correctly.
+* The system is used on a computer with Python installed.
+* SQLite is available for storing system data.
+
+## 5. Constraints
+
+* The system will be developed using **Python**.
+* The database will use **SQLite**.
+* The project must remain simple enough to complete within **a few weeks**.
+* The system will contain only the **6 specified requirements**.
