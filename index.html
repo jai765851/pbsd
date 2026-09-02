@@ -3,355 +3,1664 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System</title>
+
+    <title>LIBRA | Digital Library</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <!-- Login Section -->
-    <section id="login-page" class="login-page">
+<!-- =========================================================
+     LOGIN
+========================================================= -->
+
+<section id="login-page" class="login-page">
+
+    <div class="login-background">
+        <div class="login-orb orb-1"></div>
+        <div class="login-orb orb-2"></div>
+        <div class="login-grid"></div>
+    </div>
+
+    <div class="login-layout">
+
+        <div class="login-showcase">
+
+            <div class="showcase-brand">
+                <div class="brand-mark">L</div>
+
+                <div>
+                    <strong>LIBRA</strong>
+                    <span>Digital Library</span>
+                </div>
+            </div>
+
+            <div class="showcase-content">
+
+                <span class="section-label">
+                    LIBRARY MANAGEMENT SYSTEM
+                </span>
+
+                <h1>
+                    Your library.
+                    <br>
+                    <span>Reimagined.</span>
+                </h1>
+
+                <p>
+                    A smarter interface for managing your books,
+                    circulation, returns, fines and availability.
+                </p>
+
+            </div>
+
+            <div class="showcase-books">
+
+                <div class="showcase-book book-one">
+                    <small>B001</small>
+                    <strong>PYTHON</strong>
+                    <span>PROGRAMMING</span>
+                </div>
+
+                <div class="showcase-book book-two">
+                    <small>B002</small>
+                    <strong>DATABASE</strong>
+                    <span>SYSTEMS</span>
+                </div>
+
+                <div class="showcase-book book-three">
+                    <small>B003</small>
+                    <strong>NETWORKS</strong>
+                    <span>COMPUTING</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
         <div class="login-card">
-            <div class="login-icon">📚</div>
-            <h1>Library Management System</h1>
-            <p class="login-subtitle">Secure User Login</p>
+
+            <div class="login-card-top">
+
+                <div class="mobile-brand">
+                    <div class="brand-mark">L</div>
+                    <strong>LIBRA</strong>
+                </div>
+
+                <span class="secure-label">
+                    SECURE ACCESS
+                </span>
+
+            </div>
+
+            <div class="login-title">
+
+                <span class="section-label">
+                    WELCOME BACK
+                </span>
+
+                <h2>
+                    Enter your
+                    <span>library.</span>
+                </h2>
+
+                <p>
+                    Sign in to continue to your digital library.
+                </p>
+
+            </div>
+
 
             <form id="login-form">
-                <label for="username">Username</label>
-                <input type="text" id="username" placeholder="Enter username" required>
 
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter password" required>
+                <div class="field">
 
-                <button type="submit" class="primary-button full-width">Login</button>
-                <p id="login-message" class="form-message"></p>
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <div class="input-shell">
+
+                        <span class="input-icon">◉</span>
+
+                        <input
+                            type="text"
+                            id="username"
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="field-label-row">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <span>
+                            Required
+                        </span>
+
+                    </div>
+
+                    <div class="input-shell">
+
+                        <span class="input-icon">◆</span>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="toggle-password"
+                            class="password-toggle"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="main-button login-button"
+                >
+                    <span>Access Library</span>
+                    <span class="button-arrow">→</span>
+                </button>
+
+                <p
+                    id="login-message"
+                    class="form-message"
+                ></p>
+
             </form>
+
+
+            <div class="login-footer">
+
+                <span class="footer-dot"></span>
+
+                Frontend demonstration interface
+
+            </div>
+
         </div>
-    </section>
 
-    <!-- Main Application -->
-    <div id="app" class="app hidden">
+    </div>
 
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+</section>
+
+
+<!-- =========================================================
+     APPLICATION
+========================================================= -->
+
+<div id="app" class="app hidden">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside
+        id="sidebar"
+        class="sidebar"
+    >
+
+        <div class="sidebar-header">
+
             <div class="sidebar-brand">
-                <div class="brand-icon">📚</div>
-                <div>
-                    <h2>Library</h2>
-                    <span>Management System</span>
+
+                <div class="brand-mark">
+                    L
                 </div>
+
+                <div class="brand-name">
+
+                    <strong>LIBRA</strong>
+
+                    <span>
+                        DIGITAL LIBRARY
+                    </span>
+
+                </div>
+
             </div>
 
-            <nav class="sidebar-nav">
-                <button class="nav-item active" data-section="book-management">
-                    <span class="nav-icon">📖</span>
-                    <span>Book Management</span>
-                </button>
 
-                <button class="nav-item" data-section="book-issue">
-                    <span class="nav-icon">📤</span>
-                    <span>Book Issue</span>
-                </button>
+            <button
+                id="close-sidebar"
+                class="close-sidebar"
+                aria-label="Close navigation"
+            >
+                ×
+            </button>
 
-                <button class="nav-item" data-section="book-return">
-                    <span class="nav-icon">📥</span>
-                    <span>Book Return</span>
-                </button>
-
-                <button class="nav-item" data-section="fine-management">
-                    <span class="nav-icon">₹</span>
-                    <span>Fine Management</span>
-                </button>
-
-                <button class="nav-item" data-section="book-availability">
-                    <span class="nav-icon">✓</span>
-                    <span>Book Availability</span>
-                </button>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-
-            <!-- Header -->
-            <header class="header">
-                <button id="menu-toggle" class="menu-toggle" aria-label="Open navigation">☰</button>
-
-                <div class="header-title">
-                    <h1>Library Management System</h1>
-                    <p>Manage books, issues, returns, fines and availability</p>
-                </div>
-
-                <div class="profile-area">
-                    <div class="profile-avatar">U</div>
-                    <div>
-                        <strong id="profile-name">User</strong>
-                        <span>Authenticated User</span>
-                    </div>
-                </div>
-            </header>
-
-            <div class="content-area">
-
-                <!-- Dashboard / Book Management -->
-                <section id="book-management" class="page-section active-section">
-                    <div class="page-heading">
-                        <div>
-                            <h2>Book Management</h2>
-                            <p>Add, update, delete and search library books.</p>
-                        </div>
-                        <button class="primary-button" id="add-book-button">+ Add Book</button>
-                    </div>
-
-                    <!-- Summary Cards -->
-                    <div class="summary-grid">
-                        <div class="summary-card">
-                            <div class="summary-icon">📚</div>
-                            <div>
-                                <span>Total Books</span>
-                                <strong id="total-books">0</strong>
-                            </div>
-                        </div>
-
-                        <div class="summary-card">
-                            <div class="summary-icon">✓</div>
-                            <div>
-                                <span>Available Books</span>
-                                <strong id="available-books">0</strong>
-                            </div>
-                        </div>
-
-                        <div class="summary-card">
-                            <div class="summary-icon">📤</div>
-                            <div>
-                                <span>Borrowed Books</span>
-                                <strong id="borrowed-books">0</strong>
-                            </div>
-                        </div>
-
-                        <div class="summary-card">
-                            <div class="summary-icon">₹</div>
-                            <div>
-                                <span>Overdue Books</span>
-                                <strong id="overdue-books">0</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Search -->
-                    <div class="panel">
-                        <div class="panel-heading">
-                            <div>
-                                <h3>Library Books</h3>
-                                <p>Search the sample library records.</p>
-                            </div>
-                            <div class="search-box">
-                                <span>⌕</span>
-                                <input type="search" id="book-search" placeholder="Search by title or author">
-                            </div>
-                        </div>
-
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Book ID</th>
-                                        <th>Title</th>
-                                        <th>Author</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="book-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Book Issue -->
-                <section id="book-issue" class="page-section">
-                    <div class="page-heading">
-                        <div>
-                            <h2>Book Issue</h2>
-                            <p>Record books issued to users and update their availability.</p>
-                        </div>
-                    </div>
-
-                    <div class="two-column-grid">
-                        <div class="panel">
-                            <h3>Issue a Book</h3>
-                            <p class="panel-description">Select an available book and enter the user name.</p>
-
-                            <form id="issue-form">
-                                <label for="issue-book">Available Book</label>
-                                <select id="issue-book" required></select>
-
-                                <label for="issue-user">User</label>
-                                <input type="text" id="issue-user" placeholder="Enter user name" required>
-
-                                <button type="submit" class="primary-button">Issue Book</button>
-                                <p id="issue-message" class="form-message"></p>
-                            </form>
-                        </div>
-
-                        <div class="panel">
-                            <h3>Issued Books</h3>
-                            <div class="table-wrapper">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Book</th>
-                                            <th>User</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="issued-table-body"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Book Return -->
-                <section id="book-return" class="page-section">
-                    <div class="page-heading">
-                        <div>
-                            <h2>Book Return</h2>
-                            <p>Record returned books and update their status.</p>
-                        </div>
-                    </div>
-
-                    <div class="two-column-grid">
-                        <div class="panel">
-                            <h3>Return a Book</h3>
-                            <p class="panel-description">Select a currently borrowed book.</p>
-
-                            <form id="return-form">
-                                <label for="return-book">Borrowed Book</label>
-                                <select id="return-book" required></select>
-
-                                <button type="submit" class="primary-button">Record Return</button>
-                                <p id="return-message" class="form-message"></p>
-                            </form>
-                        </div>
-
-                        <div class="panel">
-                            <h3>Returned Books</h3>
-                            <div class="table-wrapper">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Book</th>
-                                            <th>Previous User</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="returned-table-body"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Fine Management -->
-                <section id="fine-management" class="page-section">
-                    <div class="page-heading">
-                        <div>
-                            <h2>Fine Management</h2>
-                            <p>Calculate fines for overdue books.</p>
-                        </div>
-                    </div>
-
-                    <div class="panel">
-                        <div class="panel-heading">
-                            <div>
-                                <h3>Overdue Books</h3>
-                                <p>Sample overdue records for frontend demonstration.</p>
-                            </div>
-                        </div>
-
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Book</th>
-                                        <th>User</th>
-                                        <th>Days Overdue</th>
-                                        <th>Fine</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="fine-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Book Availability -->
-                <section id="book-availability" class="page-section">
-                    <div class="page-heading">
-                        <div>
-                            <h2>Book Availability</h2>
-                            <p>Check available and borrowed books.</p>
-                        </div>
-                    </div>
-
-                    <div class="panel">
-                        <div class="panel-heading">
-                            <div>
-                                <h3>Book Availability</h3>
-                                <p>View the current status of library books.</p>
-                            </div>
-
-                            <select id="availability-filter" class="filter-select">
-                                <option value="all">All Books</option>
-                                <option value="available">Available</option>
-                                <option value="borrowed">Borrowed</option>
-                            </select>
-                        </div>
-
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Book ID</th>
-                                        <th>Title</th>
-                                        <th>Author</th>
-                                        <th>Availability</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="availability-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-        </main>
-    </div>
-
-    <!-- Add Book Modal -->
-    <div id="book-modal" class="modal hidden">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3>Add Library Book</h3>
-                <button id="close-modal" class="close-button" aria-label="Close">×</button>
-            </div>
-
-            <form id="add-book-form">
-                <label for="new-book-title">Book Title</label>
-                <input type="text" id="new-book-title" required>
-
-                <label for="new-book-author">Author</label>
-                <input type="text" id="new-book-author" required>
-
-                <div class="modal-actions">
-                    <button type="button" id="cancel-modal" class="secondary-button">Cancel</button>
-                    <button type="submit" class="primary-button">Add Book</button>
-                </div>
-            </form>
         </div>
+
+
+        <div class="library-profile">
+
+            <div class="library-avatar">
+                ◈
+            </div>
+
+            <div>
+
+                <strong>
+                    Main Collection
+                </strong>
+
+                <span>
+                    Library catalog
+                </span>
+
+            </div>
+
+            <span class="online-indicator"></span>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-title">
+                LIBRARY
+            </div>
+
+
+            <button
+                class="nav-item active"
+                data-section="book-management"
+            >
+
+                <span class="nav-icon">▦</span>
+
+                <span>
+                    Book Management
+                </span>
+
+                <span class="nav-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="book-issue"
+            >
+
+                <span class="nav-icon">↗</span>
+
+                <span>
+                    Book Issue
+                </span>
+
+                <span class="nav-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="book-return"
+            >
+
+                <span class="nav-icon">↙</span>
+
+                <span>
+                    Book Return
+                </span>
+
+                <span class="nav-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="fine-management"
+            >
+
+                <span class="nav-icon">₹</span>
+
+                <span>
+                    Fine Management
+                </span>
+
+                <span class="nav-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="book-availability"
+            >
+
+                <span class="nav-icon">◉</span>
+
+                <span>
+                    Book Availability
+                </span>
+
+                <span class="nav-arrow">
+                    ›
+                </span>
+
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="sidebar-stat">
+
+                <div class="sidebar-stat-icon">
+                    ◫
+                </div>
+
+                <div>
+
+                    <span>
+                        COLLECTION
+                    </span>
+
+                    <strong id="sidebar-total">
+                        5 books
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="logout-button"
+                class="logout-button"
+            >
+
+                <span>↪</span>
+
+                Sign out
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <header class="top-header">
+
+            <div class="header-left">
+
+                <button
+                    id="menu-toggle"
+                    class="menu-toggle"
+                    aria-label="Open navigation"
+                >
+                    ☰
+                </button>
+
+                <div class="breadcrumb">
+
+                    <span>
+                        LIBRA
+                    </span>
+
+                    <i>/</i>
+
+                    <strong id="breadcrumb-title">
+                        Collection
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <button
+                    id="header-search-button"
+                    class="header-search-button"
+                >
+
+                    <span>⌕</span>
+
+                    <span>
+                        Search collection
+                    </span>
+
+                    <kbd>
+                        /
+                    </kbd>
+
+                </button>
+
+
+                <div class="header-divider"></div>
+
+
+                <div class="user-area">
+
+                    <div
+                        class="user-avatar"
+                        id="profile-avatar"
+                    >
+                        U
+                    </div>
+
+                    <div class="user-details">
+
+                        <strong id="profile-name">
+                            User
+                        </strong>
+
+                        <span>
+                            Authenticated User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <div class="content-area">
+
+
+            <!-- =================================================
+                 BOOK MANAGEMENT
+            ================================================== -->
+
+            <section
+                id="book-management"
+                class="page-section active-section"
+            >
+
+
+                <!-- CATALOG INTRO -->
+
+                <div class="catalog-intro">
+
+                    <div>
+
+                        <div class="title-with-status">
+
+                            <span class="live-pulse"></span>
+
+                            <span>
+                                YOUR COLLECTION
+                            </span>
+
+                        </div>
+
+                        <h1>
+                            Discover your
+                            <span>library.</span>
+                        </h1>
+
+                        <p>
+                            Browse every book in your collection,
+                            search by title or author, and manage
+                            your catalog from one place.
+                        </p>
+
+                    </div>
+
+
+                    <div class="intro-decoration">
+
+                        <div class="orbit orbit-large"></div>
+                        <div class="orbit orbit-small"></div>
+
+                        <div class="floating-symbol">
+                            L
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <div
+                    id="catalog-search-container"
+                    class="catalog-search"
+                >
+
+                    <span class="big-search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="search"
+                        id="book-search"
+                        placeholder="Search your library by title, author or book ID..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        id="clear-search"
+                        class="clear-search"
+                    >
+                        ×
+                    </button>
+
+                    <div class="search-shortcut">
+                        /
+                    </div>
+
+                </div>
+
+
+                <!-- METRICS -->
+
+                <div class="catalog-metrics">
+
+                    <div class="metric">
+
+                        <span>
+                            COLLECTION
+                        </span>
+
+                        <strong id="total-books">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric metric-green">
+
+                        <span>
+                            AVAILABLE
+                        </span>
+
+                        <strong id="available-books">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric metric-violet">
+
+                        <span>
+                            BORROWED
+                        </span>
+
+                        <strong id="borrowed-books">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric metric-red">
+
+                        <span>
+                            OVERDUE
+                        </span>
+
+                        <strong id="overdue-books">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- COLLECTION TOOLBAR -->
+
+                <div class="collection-toolbar">
+
+                    <div>
+
+                        <span class="section-label">
+                            CATALOG
+                        </span>
+
+                        <h2>
+                            Your books
+                        </h2>
+
+                    </div>
+
+
+                    <div class="toolbar-actions">
+
+                        <select
+                            id="book-sort"
+                            class="sort-select"
+                        >
+                            <option value="default">
+                                Sort: Default
+                            </option>
+
+                            <option value="title">
+                                Sort: Title
+                            </option>
+
+                            <option value="author">
+                                Sort: Author
+                            </option>
+
+                            <option value="status">
+                                Sort: Availability
+                            </option>
+                        </select>
+
+
+                        <button
+                            id="add-book-button"
+                            class="main-button"
+                        >
+
+                            <span>+</span>
+
+                            Add Book
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BOOK COLLECTION -->
+
+                <div
+                    id="book-collection"
+                    class="book-collection"
+                ></div>
+
+
+                <!-- TABLE FALLBACK / DATA VIEW -->
+
+                <div class="catalog-data-panel">
+
+                    <div class="data-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                RECORDS
+                            </span>
+
+                            <h3>
+                                Library database view
+                            </h3>
+
+                        </div>
+
+                        <span
+                            id="book-result-count"
+                            class="result-count"
+                        >
+                            0 books
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Book ID
+                                    </th>
+
+                                    <th>
+                                        Title
+                                    </th>
+
+                                    <th>
+                                        Author
+                                    </th>
+
+                                    <th>
+                                        Availability
+                                    </th>
+
+                                    <th>
+                                        Actions
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="book-table-body"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 BOOK ISSUE
+            ================================================== -->
+
+            <section
+                id="book-issue"
+                class="page-section"
+            >
+
+                <div class="page-top">
+
+                    <div>
+
+                        <span class="section-label">
+                            CIRCULATION / 01
+                        </span>
+
+                        <h1>
+                            Issue a book
+                        </h1>
+
+                        <p>
+                            Record a book issued to a user
+                            and update its availability.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="operation-layout">
+
+                    <div class="operation-card issue-card">
+
+                        <div class="operation-number">
+                            01
+                        </div>
+
+                        <div class="operation-title">
+
+                            <span>
+                                ISSUE BOOK
+                            </span>
+
+                            <h2>
+                                Create a new issue
+                            </h2>
+
+                        </div>
+
+
+                        <form id="issue-form">
+
+                            <div class="field">
+
+                                <label for="issue-book">
+                                    Available Book
+                                </label>
+
+                                <select
+                                    id="issue-book"
+                                    required
+                                ></select>
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="issue-user">
+                                    User
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="issue-user"
+                                    placeholder="Enter user name"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="main-button full-width"
+                            >
+
+                                <span>
+                                    Record Issue
+                                </span>
+
+                                <span>
+                                    →
+                                </span>
+
+                            </button>
+
+
+                            <p
+                                id="issue-message"
+                                class="form-message"
+                            ></p>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="operation-side">
+
+                        <div class="status-panel">
+
+                            <div class="status-panel-top">
+
+                                <span class="section-label">
+                                    CURRENT STATE
+                                </span>
+
+                                <span class="status-live">
+                                    LIVE
+                                </span>
+
+                            </div>
+
+                            <strong id="issue-count">
+                                0
+                            </strong>
+
+                            <span>
+                                books currently on loan
+                            </span>
+
+                        </div>
+
+
+                        <div class="tip-panel">
+
+                            <span class="tip-icon">
+                                i
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Availability updates instantly
+                                </strong>
+
+                                <p>
+                                    Once issued, the selected book
+                                    automatically moves to the
+                                    borrowed state.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="data-panel">
+
+                    <div class="data-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                ACTIVE LOANS
+                            </span>
+
+                            <h3>
+                                Issued books
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Book
+                                    </th>
+
+                                    <th>
+                                        User
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="issued-table-body"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 BOOK RETURN
+            ================================================== -->
+
+            <section
+                id="book-return"
+                class="page-section"
+            >
+
+                <div class="page-top">
+
+                    <div>
+
+                        <span class="section-label">
+                            CIRCULATION / 02
+                        </span>
+
+                        <h1>
+                            Return a book
+                        </h1>
+
+                        <p>
+                            Record returned books and restore
+                            their availability.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="operation-layout">
+
+                    <div class="operation-card return-card">
+
+                        <div class="operation-number">
+                            02
+                        </div>
+
+                        <div class="operation-title">
+
+                            <span>
+                                RETURN BOOK
+                            </span>
+
+                            <h2>
+                                Record a return
+                            </h2>
+
+                        </div>
+
+
+                        <form id="return-form">
+
+                            <div class="field">
+
+                                <label for="return-book">
+                                    Borrowed Book
+                                </label>
+
+                                <select
+                                    id="return-book"
+                                    required
+                                ></select>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="main-button full-width"
+                            >
+
+                                <span>
+                                    Record Return
+                                </span>
+
+                                <span>
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <p
+                                id="return-message"
+                                class="form-message"
+                            ></p>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="operation-side">
+
+                        <div class="return-visual">
+
+                            <div class="return-ring ring-one"></div>
+                            <div class="return-ring ring-two"></div>
+
+                            <div class="return-center">
+                                ✓
+                            </div>
+
+                        </div>
+
+                        <p class="return-caption">
+                            Returned books become
+                            <strong>available</strong>
+                            immediately.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="data-panel">
+
+                    <div class="data-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                SESSION HISTORY
+                            </span>
+
+                            <h3>
+                                Returned books
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Book
+                                    </th>
+
+                                    <th>
+                                        Previous User
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="returned-table-body"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 FINE MANAGEMENT
+            ================================================== -->
+
+            <section
+                id="fine-management"
+                class="page-section"
+            >
+
+                <div class="page-top">
+
+                    <div>
+
+                        <span class="section-label">
+                            FINANCIAL RECORDS
+                        </span>
+
+                        <h1>
+                            Fine management
+                        </h1>
+
+                        <p>
+                            Review overdue books and their
+                            recorded fines.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="fine-overview">
+
+                    <div class="fine-main">
+
+                        <span>
+                            RECORDED FINES
+                        </span>
+
+                        <strong id="total-fine">
+                            ₹0
+                        </strong>
+
+                        <small>
+                            Total from current sample records
+                        </small>
+
+                        <div class="fine-glow"></div>
+
+                    </div>
+
+
+                    <div class="fine-stat">
+
+                        <span>
+                            OVERDUE BOOKS
+                        </span>
+
+                        <strong id="fine-book-count">
+                            0
+                        </strong>
+
+                        <small>
+                            Require attention
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="data-panel">
+
+                    <div class="data-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                OVERDUE RECORDS
+                            </span>
+
+                            <h3>
+                                Fine records
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Book
+                                    </th>
+
+                                    <th>
+                                        User
+                                    </th>
+
+                                    <th>
+                                        Days Overdue
+                                    </th>
+
+                                    <th>
+                                        Fine
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="fine-table-body"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 BOOK AVAILABILITY
+            ================================================== -->
+
+            <section
+                id="book-availability"
+                class="page-section"
+            >
+
+                <div class="page-top availability-page-top">
+
+                    <div>
+
+                        <span class="section-label">
+                            CATALOG STATUS
+                        </span>
+
+                        <h1>
+                            Book availability
+                        </h1>
+
+                        <p>
+                            See which books are available
+                            and which are currently borrowed.
+                        </p>
+
+                    </div>
+
+
+                    <div class="availability-controls">
+
+                        <button
+                            class="availability-filter active"
+                            data-filter="all"
+                        >
+                            All
+                        </button>
+
+                        <button
+                            class="availability-filter"
+                            data-filter="available"
+                        >
+                            Available
+                        </button>
+
+                        <button
+                            class="availability-filter"
+                            data-filter="borrowed"
+                        >
+                            Borrowed
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="availability-grid"
+                    class="availability-grid"
+                ></div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     BOOK MODAL
+========================================================= -->
+
+<div
+    id="book-modal"
+    class="modal hidden"
+>
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="section-label">
+                    COLLECTION
+                </span>
+
+                <h2 id="modal-title">
+                    Add library book
+                </h2>
+
+            </div>
+
+            <button
+                id="close-modal"
+                class="modal-close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="add-book-form">
+
+            <div class="field">
+
+                <label for="new-book-title">
+                    Book Title
+                </label>
+
+                <input
+                    type="text"
+                    id="new-book-title"
+                    placeholder="Enter book title"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="new-book-author">
+                    Author
+                </label>
+
+                <input
+                    type="text"
+                    id="new-book-author"
+                    placeholder="Enter author name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="modal-preview">
+
+                <div class="preview-cover">
+                    L
+                </div>
+
+                <div>
+
+                    <strong>
+                        New collection item
+                    </strong>
+
+                    <span>
+                        It will be added as available.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancel-modal"
+                    class="secondary-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="main-button"
+                >
+                    Add Book
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
 
-    <script src="script.js"></script>
+</div>
+
+
+<!-- =========================================================
+     BOOK DETAIL MODAL
+========================================================= -->
+
+<div
+    id="detail-modal"
+    class="modal hidden"
+>
+
+    <div class="detail-card">
+
+        <button
+            id="close-detail"
+            class="modal-close"
+        >
+            ×
+        </button>
+
+
+        <div
+            id="detail-cover"
+            class="detail-cover"
+        >
+            <span id="detail-id">
+                B001
+            </span>
+
+            <strong id="detail-cover-title">
+                BOOK
+            </strong>
+        </div>
+
+
+        <div class="detail-content">
+
+            <span class="section-label">
+                BOOK RECORD
+            </span>
+
+            <h2 id="detail-title">
+                Book Title
+            </h2>
+
+            <p
+                id="detail-author"
+                class="detail-author"
+            >
+                Author
+            </p>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Book ID
+                </span>
+
+                <strong id="detail-book-id">
+                    B001
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Availability
+                </span>
+
+                <span id="detail-status"></span>
+
+            </div>
+
+
+            <div
+                id="detail-user-row"
+                class="detail-row hidden"
+            >
+
+                <span>
+                    Current User
+                </span>
+
+                <strong id="detail-user">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="detail-actions">
+
+                <button
+                    id="detail-update"
+                    class="secondary-button"
+                >
+                    Edit Book
+                </button>
+
+                <button
+                    id="detail-delete"
+                    class="danger-button"
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div
+    id="toast"
+    class="toast"
+>
+
+    <div
+        id="toast-icon"
+        class="toast-icon"
+    >
+        ✓
+    </div>
+
+    <div>
+
+        <strong id="toast-title">
+            Success
+        </strong>
+
+        <span id="toast-message">
+            Operation completed.
+        </span>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
 </body>
 </html>
