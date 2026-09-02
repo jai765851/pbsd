@@ -1,12 +1,12 @@
 /* =========================================================
    LIBRA — DIGITAL LIBRARY
-   FRONTEND MOCK VERSION
-========================================================= */
+   LEVEL 2 ENHANCED JAVASCRIPT
+   ========================================================= */
 
 
 /* =========================================================
    MOCK DATA
-========================================================= */
+   ========================================================= */
 
 let books = [
 
@@ -79,7 +79,7 @@ let books = [
 
 /* =========================================================
    MOCK FINES
-========================================================= */
+   ========================================================= */
 
 let fines = [
 
@@ -104,8 +104,8 @@ let returnedBooks = [];
 
 
 /* =========================================================
-   DOM
-========================================================= */
+   DOM ELEMENTS
+   ========================================================= */
 
 const loginPage =
     document.getElementById("login-page");
@@ -153,32 +153,22 @@ const clearSearch =
     document.getElementById("clear-search");
 
 const headerSearchButton =
-    document.getElementById(
-        "header-search-button"
-    );
+    document.getElementById("header-search-button");
 
 const bookSort =
     document.getElementById("book-sort");
 
 const bookCollection =
-    document.getElementById(
-        "book-collection"
-    );
+    document.getElementById("book-collection");
 
 const bookTableBody =
-    document.getElementById(
-        "book-table-body"
-    );
+    document.getElementById("book-table-body");
 
 const availabilityGrid =
-    document.getElementById(
-        "availability-grid"
-    );
+    document.getElementById("availability-grid");
 
 const availabilityFilters =
-    document.querySelectorAll(
-        ".availability-filter"
-    );
+    document.querySelectorAll(".availability-filter");
 
 const issueForm =
     document.getElementById("issue-form");
@@ -193,102 +183,76 @@ const returnBookSelect =
     document.getElementById("return-book");
 
 const issuedTableBody =
-    document.getElementById(
-        "issued-table-body"
-    );
+    document.getElementById("issued-table-body");
 
 const returnedTableBody =
-    document.getElementById(
-        "returned-table-body"
-    );
+    document.getElementById("returned-table-body");
 
 const fineTableBody =
-    document.getElementById(
-        "fine-table-body"
-    );
+    document.getElementById("fine-table-body");
 
 const issueMessage =
-    document.getElementById(
-        "issue-message"
-    );
+    document.getElementById("issue-message");
 
 const returnMessage =
-    document.getElementById(
-        "return-message"
-    );
+    document.getElementById("return-message");
 
 const addBookButton =
-    document.getElementById(
-        "add-book-button"
-    );
+    document.getElementById("add-book-button");
 
 const bookModal =
-    document.getElementById(
-        "book-modal"
-    );
+    document.getElementById("book-modal");
 
 const addBookForm =
-    document.getElementById(
-        "add-book-form"
-    );
+    document.getElementById("add-book-form");
 
 const closeModal =
-    document.getElementById(
-        "close-modal"
-    );
+    document.getElementById("close-modal");
 
 const cancelModal =
-    document.getElementById(
-        "cancel-modal"
-    );
+    document.getElementById("cancel-modal");
 
 const detailModal =
-    document.getElementById(
-        "detail-modal"
-    );
+    document.getElementById("detail-modal");
 
 const closeDetail =
-    document.getElementById(
-        "close-detail"
-    );
+    document.getElementById("close-detail");
 
 const detailUpdate =
-    document.getElementById(
-        "detail-update"
-    );
+    document.getElementById("detail-update");
 
 const detailDelete =
-    document.getElementById(
-        "detail-delete"
-    );
+    document.getElementById("detail-delete");
 
 const togglePassword =
-    document.getElementById(
-        "toggle-password"
-    );
+    document.getElementById("toggle-password");
 
 const toast =
     document.getElementById("toast");
 
 const toastTitle =
-    document.getElementById(
-        "toast-title"
-    );
+    document.getElementById("toast-title");
 
 const toastMessage =
-    document.getElementById(
-        "toast-message"
-    );
+    document.getElementById("toast-message");
 
 const toastIcon =
-    document.getElementById(
-        "toast-icon"
-    );
+    document.getElementById("toast-icon");
+
+
+/* =========================================================
+   LEVEL 2 VIEW CONTROLS
+   ========================================================= */
+
+let catalogView = "grid";
+
+let gridViewButton = null;
+let listViewButton = null;
 
 
 /* =========================================================
    CURRENT STATE
-========================================================= */
+   ========================================================= */
 
 let currentDetailBookId = null;
 
@@ -298,12 +262,25 @@ let toastTimer = null;
 
 
 /* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    createCatalogViewControls();
+
+    renderAll();
+
+});
+
+
+/* =========================================================
    LOGIN
-========================================================= */
+   ========================================================= */
 
 loginForm.addEventListener(
     "submit",
-    function(event) {
+    function (event) {
 
         event.preventDefault();
 
@@ -330,10 +307,11 @@ loginForm.addEventListener(
 
 
         /*
-            Frontend-only demo.
+            Frontend-only demonstration.
 
-            Any non-empty credentials are accepted
-            because there is currently no backend.
+            Any non-empty username and password
+            are accepted because there is currently
+            no backend authentication.
         */
 
         profileName.textContent =
@@ -352,6 +330,18 @@ loginForm.addEventListener(
         loginMessage.textContent = "";
 
 
+        /*
+            Small reset so the application
+            entrance animation plays again.
+        */
+
+        app.classList.remove("app-enter");
+
+        void app.offsetWidth;
+
+        app.classList.add("app-enter");
+
+
         renderAll();
 
 
@@ -367,16 +357,14 @@ loginForm.addEventListener(
 
 /* =========================================================
    PASSWORD VISIBILITY
-========================================================= */
+   ========================================================= */
 
 togglePassword.addEventListener(
     "click",
-    function() {
+    function () {
 
         const password =
-            document.getElementById(
-                "password"
-            );
+            document.getElementById("password");
 
 
         if (
@@ -403,11 +391,11 @@ togglePassword.addEventListener(
 
 /* =========================================================
    LOGOUT
-========================================================= */
+   ========================================================= */
 
 logoutButton.addEventListener(
     "click",
-    function() {
+    function () {
 
         app.classList.add("hidden");
 
@@ -415,6 +403,10 @@ logoutButton.addEventListener(
 
         document
             .getElementById("password")
+            .value = "";
+
+        document
+            .getElementById("username")
             .value = "";
 
         showToast(
@@ -429,21 +421,21 @@ logoutButton.addEventListener(
 
 /* =========================================================
    NAVIGATION
-========================================================= */
+   ========================================================= */
 
 navItems.forEach(
-    function(item) {
+    function (item) {
 
         item.addEventListener(
             "click",
-            function() {
+            function () {
 
                 const sectionId =
                     item.dataset.section;
 
 
                 navItems.forEach(
-                    function(nav) {
+                    function (nav) {
 
                         nav.classList.remove(
                             "active"
@@ -454,7 +446,7 @@ navItems.forEach(
 
 
                 sections.forEach(
-                    function(section) {
+                    function (section) {
 
                         section.classList.remove(
                             "active-section"
@@ -522,11 +514,11 @@ navItems.forEach(
 
 /* =========================================================
    MOBILE SIDEBAR
-========================================================= */
+   ========================================================= */
 
 menuToggle.addEventListener(
     "click",
-    function() {
+    function () {
 
         sidebar.classList.add(
             "open"
@@ -538,7 +530,7 @@ menuToggle.addEventListener(
 
 closeSidebar.addEventListener(
     "click",
-    function() {
+    function () {
 
         sidebar.classList.remove(
             "open"
@@ -550,11 +542,11 @@ closeSidebar.addEventListener(
 
 /* =========================================================
    HEADER SEARCH
-========================================================= */
+   ========================================================= */
 
 headerSearchButton.addEventListener(
     "click",
-    function() {
+    function () {
 
         goToCollectionSearch();
 
@@ -570,13 +562,21 @@ function goToCollectionSearch() {
         );
 
 
-    collectionNav.click();
+    if (collectionNav) {
+
+        collectionNav.click();
+
+    }
 
 
     setTimeout(
-        function() {
+        function () {
 
-            bookSearch.focus();
+            if (bookSearch) {
+
+                bookSearch.focus();
+
+            }
 
         },
         100
@@ -587,11 +587,11 @@ function goToCollectionSearch() {
 
 /* =========================================================
    KEYBOARD SEARCH
-========================================================= */
+   ========================================================= */
 
 document.addEventListener(
     "keydown",
-    function(event) {
+    function (event) {
 
         if (
             event.key === "/" &&
@@ -606,17 +606,33 @@ document.addEventListener(
 
         }
 
+        /*
+            Escape closes open modals/sidebar.
+        */
+
+        if (event.key === "Escape") {
+
+            closeBookModal();
+
+            closeDetailModal();
+
+            sidebar.classList.remove(
+                "open"
+            );
+
+        }
+
     }
 );
 
 
 /* =========================================================
    SEARCH
-========================================================= */
+   ========================================================= */
 
 bookSearch.addEventListener(
     "input",
-    function() {
+    function () {
 
         const value =
             bookSearch.value.trim();
@@ -651,7 +667,7 @@ bookSearch.addEventListener(
 
 clearSearch.addEventListener(
     "click",
-    function() {
+    function () {
 
         bookSearch.value = "";
 
@@ -671,13 +687,17 @@ clearSearch.addEventListener(
 
 /* =========================================================
    SORT
-========================================================= */
+   ========================================================= */
 
 bookSort.addEventListener(
     "change",
-    function() {
+    function () {
 
         renderBookCollection(
+            bookSearch.value
+        );
+
+        renderBookTable(
             bookSearch.value
         );
 
@@ -686,8 +706,207 @@ bookSort.addEventListener(
 
 
 /* =========================================================
-   GET SORTED BOOKS
-========================================================= */
+   LEVEL 2 — GRID / LIST VIEW
+   ========================================================= */
+
+function createCatalogViewControls() {
+
+    const toolbar =
+        document.querySelector(
+            ".collection-toolbar"
+        );
+
+
+    if (!toolbar) {
+        return;
+    }
+
+
+    /*
+        Don't create duplicate controls
+        if they already exist in HTML.
+    */
+
+    if (
+        document.getElementById(
+            "catalog-view-controls"
+        )
+    ) {
+
+        gridViewButton =
+            document.getElementById(
+                "grid-view-btn"
+            );
+
+        listViewButton =
+            document.getElementById(
+                "list-view-btn"
+            );
+
+        setupViewButtons();
+
+        return;
+    }
+
+
+    const controls =
+        document.createElement("div");
+
+    controls.id =
+        "catalog-view-controls";
+
+    controls.className =
+        "catalog-view-controls";
+
+
+    controls.innerHTML = `
+
+        <button
+            type="button"
+            id="grid-view-btn"
+            class="view-button active"
+            title="Grid view"
+            aria-label="Grid view"
+        >
+            ▦
+        </button>
+
+        <button
+            type="button"
+            id="list-view-btn"
+            class="view-button"
+            title="List view"
+            aria-label="List view"
+        >
+            ☰
+        </button>
+
+    `;
+
+
+    /*
+        Put the controls before Add Book.
+    */
+
+    const toolbarActions =
+        toolbar.querySelector(
+            ".toolbar-actions"
+        );
+
+
+    if (toolbarActions) {
+
+        toolbarActions.prepend(
+            controls
+        );
+
+    } else {
+
+        toolbar.appendChild(
+            controls
+        );
+
+    }
+
+
+    gridViewButton =
+        document.getElementById(
+            "grid-view-btn"
+        );
+
+    listViewButton =
+        document.getElementById(
+            "list-view-btn"
+        );
+
+
+    setupViewButtons();
+
+}
+
+
+function setupViewButtons() {
+
+    if (
+        !gridViewButton ||
+        !listViewButton
+    ) {
+
+        return;
+
+    }
+
+
+    gridViewButton.addEventListener(
+        "click",
+        function () {
+
+            setCatalogView("grid");
+
+        }
+    );
+
+
+    listViewButton.addEventListener(
+        "click",
+        function () {
+
+            setCatalogView("list");
+
+        }
+    );
+
+}
+
+
+function setCatalogView(view) {
+
+    catalogView = view;
+
+
+    if (
+        gridViewButton &&
+        listViewButton
+    ) {
+
+        gridViewButton.classList.toggle(
+            "active",
+            view === "grid"
+        );
+
+        listViewButton.classList.toggle(
+            "active",
+            view === "list"
+        );
+
+    }
+
+
+    if (bookCollection) {
+
+        bookCollection.classList.toggle(
+            "list-view",
+            view === "list"
+        );
+
+        bookCollection.classList.toggle(
+            "grid-view",
+            view === "grid"
+        );
+
+    }
+
+
+    renderBookCollection(
+        bookSearch.value
+    );
+
+}
+
+
+/* =========================================================
+   GET SORTED / FILTERED BOOKS
+   ========================================================= */
 
 function getProcessedBooks(
     searchText = ""
@@ -701,7 +920,7 @@ function getProcessedBooks(
 
     let filtered =
         books.filter(
-            function(book) {
+            function (book) {
 
                 return (
 
@@ -734,7 +953,7 @@ function getProcessedBooks(
     if (sort === "title") {
 
         filtered.sort(
-            function(a, b) {
+            function (a, b) {
 
                 return a.title
                     .localeCompare(b.title);
@@ -748,7 +967,7 @@ function getProcessedBooks(
     if (sort === "author") {
 
         filtered.sort(
-            function(a, b) {
+            function (a, b) {
 
                 return a.author
                     .localeCompare(b.author);
@@ -762,7 +981,7 @@ function getProcessedBooks(
     if (sort === "status") {
 
         filtered.sort(
-            function(a, b) {
+            function (a, b) {
 
                 return a.status
                     .localeCompare(b.status);
@@ -780,11 +999,16 @@ function getProcessedBooks(
 
 /* =========================================================
    BOOK COLLECTION
-========================================================= */
+   ========================================================= */
 
 function renderBookCollection(
     searchText = ""
 ) {
+
+    if (!bookCollection) {
+        return;
+    }
+
 
     const filteredBooks =
         getProcessedBooks(
@@ -792,14 +1016,22 @@ function renderBookCollection(
         );
 
 
-    document.getElementById(
-        "book-result-count"
-    ).textContent =
-        `${filteredBooks.length} book${
-            filteredBooks.length === 1
-                ? ""
-                : "s"
-        }`;
+    const resultCount =
+        document.getElementById(
+            "book-result-count"
+        );
+
+
+    if (resultCount) {
+
+        resultCount.textContent =
+            `${filteredBooks.length} book${
+                filteredBooks.length === 1
+                    ? ""
+                    : "s"
+            }`;
+
+    }
 
 
     if (
@@ -831,10 +1063,14 @@ function renderBookCollection(
     }
 
 
+    /*
+        Level 2 premium cards.
+    */
+
     bookCollection.innerHTML =
         filteredBooks
             .map(
-                function(book) {
+                function (book, index) {
 
                     const shortTitle =
                         getCoverTitle(
@@ -842,15 +1078,45 @@ function renderBookCollection(
                         );
 
 
+                    const statusClass =
+                        book.status === "available"
+                            ? "available"
+                            : book.status === "borrowed"
+                                ? "borrowed"
+                                : "overdue";
+
+
+                    const statusText =
+                        book.status === "available"
+                            ? "Available"
+                            : book.status === "borrowed"
+                                ? "Borrowed"
+                                : "Overdue";
+
+
+                    /*
+                        Different visual accent for
+                        different cards.
+                    */
+
+                    const coverClass =
+                        "cover-style-" +
+                        ((index % 6) + 1);
+
+
                     return `
 
                         <article
-                            class="book-card"
+                            class="book-card ${coverClass}"
+                            data-book-id="${escapeHTML(book.id)}"
+                            style="--card-index:${index};"
                         >
 
                             <div
                                 class="book-cover"
                             >
+
+                                <div class="cover-glow"></div>
 
                                 <span
                                     class="cover-id"
@@ -874,6 +1140,9 @@ function renderBookCollection(
                                     </span>
 
                                 </div>
+
+
+                                <div class="cover-lines"></div>
 
                             </div>
 
@@ -904,19 +1173,21 @@ function renderBookCollection(
                                     class="book-card-bottom"
                                 >
 
-                                    ${statusBadge(
-                                        book.status
-                                    )}
+                                    <span
+                                        class="book-status ${statusClass}"
+                                    >
+                                        <span class="status-dot"></span>
+                                        ${statusText}
+                                    </span>
 
 
                                     <button
+                                        type="button"
                                         class="card-more"
-                                        title="View details"
-                                        onclick="
-                                            openBookDetails(
-                                                '${book.id}'
-                                            )
-                                        "
+                                        data-action="details"
+                                        data-id="${escapeHTML(book.id)}"
+                                        title="View book details"
+                                        aria-label="View book details"
                                     >
                                         →
                                     </button>
@@ -933,12 +1204,64 @@ function renderBookCollection(
             )
             .join("");
 
+
+    /*
+        Event listeners are attached with JavaScript
+        rather than relying on inline onclick handlers.
+    */
+
+    bookCollection
+        .querySelectorAll(".book-card")
+        .forEach(
+            function (card) {
+
+                card.addEventListener(
+                    "click",
+                    function () {
+
+                        const bookId =
+                            card.dataset.bookId;
+
+                        openBookDetails(
+                            bookId
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    bookCollection
+        .querySelectorAll(
+            '[data-action="details"]'
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                        openBookDetails(
+                            button.dataset.id
+                        );
+
+                    }
+                );
+
+            }
+        );
+
 }
 
 
 /* =========================================================
    COVER TITLE
-========================================================= */
+   ========================================================= */
 
 function getCoverTitle(title) {
 
@@ -963,7 +1286,7 @@ function getCoverTitle(title) {
 
 /* =========================================================
    BOOK TABLE
-========================================================= */
+   ========================================================= */
 
 function renderBookTable(
     searchText = ""
@@ -999,16 +1322,18 @@ function renderBookTable(
     bookTableBody.innerHTML =
         filteredBooks
             .map(
-                function(book) {
+                function (book) {
 
                     return `
 
                         <tr>
 
                             <td>
+
                                 ${escapeHTML(
                                     book.id
                                 )}
+
                             </td>
 
 
@@ -1038,52 +1363,50 @@ function renderBookTable(
 
 
                             <td>
+
                                 ${escapeHTML(
                                     book.author
                                 )}
+
                             </td>
 
 
                             <td>
+
                                 ${statusBadge(
                                     book.status
                                 )}
+
                             </td>
 
 
                             <td>
 
                                 <button
+                                    type="button"
                                     class="table-action"
-                                    onclick="
-                                        openBookDetails(
-                                            '${book.id}'
-                                        )
-                                    "
+                                    data-action="view"
+                                    data-id="${escapeHTML(book.id)}"
                                 >
                                     View
                                 </button>
 
 
                                 <button
+                                    type="button"
                                     class="table-action"
-                                    onclick="
-                                        updateBook(
-                                            '${book.id}'
-                                        )
-                                    "
+                                    data-action="edit"
+                                    data-id="${escapeHTML(book.id)}"
                                 >
                                     Edit
                                 </button>
 
 
                                 <button
+                                    type="button"
                                     class="table-action"
-                                    onclick="
-                                        deleteBook(
-                                            '${book.id}'
-                                        )
-                                    "
+                                    data-action="delete"
+                                    data-id="${escapeHTML(book.id)}"
                                 >
                                     Delete
                                 </button>
@@ -1098,12 +1421,82 @@ function renderBookTable(
             )
             .join("");
 
+
+    /*
+        Table actions.
+    */
+
+    bookTableBody
+        .querySelectorAll(
+            '[data-action="view"]'
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        openBookDetails(
+                            button.dataset.id
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    bookTableBody
+        .querySelectorAll(
+            '[data-action="edit"]'
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        updateBook(
+                            button.dataset.id
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    bookTableBody
+        .querySelectorAll(
+            '[data-action="delete"]'
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        deleteBook(
+                            button.dataset.id
+                        );
+
+                    }
+                );
+
+            }
+        );
+
 }
 
 
 /* =========================================================
    STATUS BADGE
-========================================================= */
+   ========================================================= */
 
 function statusBadge(status) {
 
@@ -1112,9 +1505,11 @@ function statusBadge(status) {
     ) {
 
         return `
+
             <span class="status available">
                 Available
             </span>
+
         `;
 
     }
@@ -1125,18 +1520,22 @@ function statusBadge(status) {
     ) {
 
         return `
+
             <span class="status borrowed">
                 Borrowed
             </span>
+
         `;
 
     }
 
 
     return `
+
         <span class="status overdue">
             Overdue
         </span>
+
     `;
 
 }
@@ -1144,11 +1543,11 @@ function statusBadge(status) {
 
 /* =========================================================
    ADD BOOK
-========================================================= */
+   ========================================================= */
 
 addBookButton.addEventListener(
     "click",
-    function() {
+    function () {
 
         openAddBookModal();
 
@@ -1166,13 +1565,14 @@ function openAddBookModal() {
 
     addBookForm.reset();
 
+
     bookModal.classList.remove(
         "hidden"
     );
 
 
     setTimeout(
-        function() {
+        function () {
 
             document
                 .getElementById(
@@ -1212,7 +1612,7 @@ cancelModal.addEventListener(
 
 bookModal.addEventListener(
     "click",
-    function(event) {
+    function (event) {
 
         if (
             event.target === bookModal
@@ -1228,11 +1628,11 @@ bookModal.addEventListener(
 
 /* =========================================================
    ADD BOOK FORM
-========================================================= */
+   ========================================================= */
 
 addBookForm.addEventListener(
     "submit",
-    function(event) {
+    function (event) {
 
         event.preventDefault();
 
@@ -1299,7 +1699,7 @@ addBookForm.addEventListener(
 
 /* =========================================================
    GENERATE BOOK ID
-========================================================= */
+   ========================================================= */
 
 function generateBookId() {
 
@@ -1315,7 +1715,7 @@ function generateBookId() {
 
     while (
         books.some(
-            function(book) {
+            function (book) {
 
                 return book.id === id;
 
@@ -1340,7 +1740,7 @@ function generateBookId() {
 
 /* =========================================================
    UPDATE BOOK
-========================================================= */
+   ========================================================= */
 
 function updateBook(
     bookId
@@ -1348,7 +1748,7 @@ function updateBook(
 
     const book =
         books.find(
-            function(item) {
+            function (item) {
 
                 return item.id === bookId;
 
@@ -1418,7 +1818,7 @@ function updateBook(
 
 /* =========================================================
    DELETE BOOK
-========================================================= */
+   ========================================================= */
 
 function deleteBook(
     bookId
@@ -1426,7 +1826,7 @@ function deleteBook(
 
     const book =
         books.find(
-            function(item) {
+            function (item) {
 
                 return item.id === bookId;
 
@@ -1471,7 +1871,7 @@ function deleteBook(
 
     books =
         books.filter(
-            function(item) {
+            function (item) {
 
                 return item.id !== bookId;
 
@@ -1496,7 +1896,7 @@ function deleteBook(
 
 /* =========================================================
    BOOK DETAILS
-========================================================= */
+   ========================================================= */
 
 function openBookDetails(
     bookId
@@ -1504,7 +1904,7 @@ function openBookDetails(
 
     const book =
         books.find(
-            function(item) {
+            function (item) {
 
                 return item.id === bookId;
 
@@ -1618,7 +2018,7 @@ closeDetail.addEventListener(
 
 detailModal.addEventListener(
     "click",
-    function(event) {
+    function (event) {
 
         if (
             event.target === detailModal
@@ -1634,7 +2034,7 @@ detailModal.addEventListener(
 
 detailUpdate.addEventListener(
     "click",
-    function() {
+    function () {
 
         if (
             currentDetailBookId
@@ -1655,7 +2055,7 @@ detailUpdate.addEventListener(
 
 detailDelete.addEventListener(
     "click",
-    function() {
+    function () {
 
         if (
             currentDetailBookId
@@ -1673,13 +2073,13 @@ detailDelete.addEventListener(
 
 /* =========================================================
    ISSUE SELECT
-========================================================= */
+   ========================================================= */
 
 function renderIssueSelect() {
 
     const availableBooks =
         books.filter(
-            function(book) {
+            function (book) {
 
                 return (
                     book.status === "available"
@@ -1715,7 +2115,7 @@ function renderIssueSelect() {
         ${
             availableBooks
                 .map(
-                    function(book) {
+                    function (book) {
 
                         return `
 
@@ -1743,13 +2143,13 @@ function renderIssueSelect() {
 
 /* =========================================================
    RETURN SELECT
-========================================================= */
+   ========================================================= */
 
 function renderReturnSelect() {
 
     const borrowedBooks =
         books.filter(
-            function(book) {
+            function (book) {
 
                 return (
                     book.status === "borrowed"
@@ -1785,7 +2185,7 @@ function renderReturnSelect() {
         ${
             borrowedBooks
                 .map(
-                    function(book) {
+                    function (book) {
 
                         return `
 
@@ -1813,18 +2213,17 @@ function renderReturnSelect() {
 
 /* =========================================================
    ISSUE BOOK
-========================================================= */
+   ========================================================= */
 
 issueForm.addEventListener(
     "submit",
-    function(event) {
+    function (event) {
 
         event.preventDefault();
 
 
         const bookId =
             issueBookSelect.value;
-
 
         const user =
             document
@@ -1835,16 +2234,10 @@ issueForm.addEventListener(
                 .trim();
 
 
-        if (
-            !bookId ||
-            !user
-        ) {
+        if (!bookId || !user) {
 
             issueMessage.textContent =
-                "Please select a book and enter the user name.";
-
-            issueMessage.style.color =
-                "var(--red)";
+                "Please select a book and enter a user.";
 
             return;
 
@@ -1853,7 +2246,7 @@ issueForm.addEventListener(
 
         const book =
             books.find(
-                function(item) {
+                function (item) {
 
                     return item.id === bookId;
 
@@ -1861,16 +2254,19 @@ issueForm.addEventListener(
             );
 
 
+        if (!book) {
+
+            return;
+
+        }
+
+
         if (
-            !book ||
             book.status !== "available"
         ) {
 
             issueMessage.textContent =
-                "The selected book is no longer available.";
-
-            issueMessage.style.color =
-                "var(--red)";
+                "This book is not currently available.";
 
             return;
 
@@ -1884,14 +2280,19 @@ issueForm.addEventListener(
             user;
 
 
-        issueForm.reset();
-
-
         issueMessage.textContent =
-            "Book issue recorded successfully.";
+            "";
 
-        issueMessage.style.color =
-            "var(--green)";
+
+        document
+            .getElementById(
+                "issue-user"
+            )
+            .value = "";
+
+
+        issueBookSelect.value =
+            "";
 
 
         renderAll();
@@ -1899,7 +2300,7 @@ issueForm.addEventListener(
 
         showToast(
             "Book issued",
-            `"${book.title}" is now borrowed by ${user}.`,
+            `"${book.title}" was issued to ${user}.`,
             "↗"
         );
 
@@ -1909,11 +2310,11 @@ issueForm.addEventListener(
 
 /* =========================================================
    RETURN BOOK
-========================================================= */
+   ========================================================= */
 
 returnForm.addEventListener(
     "submit",
-    function(event) {
+    function (event) {
 
         event.preventDefault();
 
@@ -1927,9 +2328,6 @@ returnForm.addEventListener(
             returnMessage.textContent =
                 "Please select a borrowed book.";
 
-            returnMessage.style.color =
-                "var(--red)";
-
             return;
 
         }
@@ -1937,7 +2335,7 @@ returnForm.addEventListener(
 
         const book =
             books.find(
-                function(item) {
+                function (item) {
 
                     return item.id === bookId;
 
@@ -1945,16 +2343,7 @@ returnForm.addEventListener(
             );
 
 
-        if (
-            !book ||
-            book.status !== "borrowed"
-        ) {
-
-            returnMessage.textContent =
-                "The selected book is not currently borrowed.";
-
-            returnMessage.style.color =
-                "var(--red)";
+        if (!book) {
 
             return;
 
@@ -1969,7 +2358,9 @@ returnForm.addEventListener(
 
             book: book.title,
 
-            user: previousUser
+            user: previousUser || "Unknown",
+
+            status: "Returned"
 
         });
 
@@ -1981,14 +2372,12 @@ returnForm.addEventListener(
             "";
 
 
-        returnForm.reset();
-
-
         returnMessage.textContent =
-            "Book return recorded successfully.";
+            "";
 
-        returnMessage.style.color =
-            "var(--green)";
+
+        returnBookSelect.value =
+            "";
 
 
         renderAll();
@@ -2005,14 +2394,14 @@ returnForm.addEventListener(
 
 
 /* =========================================================
-   ISSUED TABLE
-========================================================= */
+   ISSUE TABLE
+   ========================================================= */
 
 function renderIssuedTable() {
 
-    const issuedBooks =
+    const borrowedBooks =
         books.filter(
-            function(book) {
+            function (book) {
 
                 return (
                     book.status === "borrowed"
@@ -2022,14 +2411,8 @@ function renderIssuedTable() {
         );
 
 
-    document.getElementById(
-        "issue-count"
-    ).textContent =
-        issuedBooks.length;
-
-
     if (
-        issuedBooks.length === 0
+        borrowedBooks.length === 0
     ) {
 
         issuedTableBody.innerHTML = `
@@ -2037,7 +2420,7 @@ function renderIssuedTable() {
             <tr>
 
                 <td colspan="3">
-                    No books are currently borrowed.
+                    No active loans.
                 </td>
 
             </tr>
@@ -2050,34 +2433,18 @@ function renderIssuedTable() {
 
 
     issuedTableBody.innerHTML =
-        issuedBooks
+        borrowedBooks
             .map(
-                function(book) {
+                function (book) {
 
                     return `
 
                         <tr>
 
                             <td>
-
-                                <div class="table-book">
-
-                                    <div
-                                        class="table-book-cover"
-                                    >
-                                        ${escapeHTML(
-                                            book.id
-                                        )}
-                                    </div>
-
-                                    <strong>
-                                        ${escapeHTML(
-                                            book.title
-                                        )}
-                                    </strong>
-
-                                </div>
-
+                                ${escapeHTML(
+                                    book.title
+                                )}
                             </td>
 
                             <td>
@@ -2088,7 +2455,7 @@ function renderIssuedTable() {
 
                             <td>
                                 ${statusBadge(
-                                    "borrowed"
+                                    book.status
                                 )}
                             </td>
 
@@ -2104,8 +2471,8 @@ function renderIssuedTable() {
 
 
 /* =========================================================
-   RETURN TABLE
-========================================================= */
+   RETURNED TABLE
+   ========================================================= */
 
 function renderReturnedTable() {
 
@@ -2118,7 +2485,7 @@ function renderReturnedTable() {
             <tr>
 
                 <td colspan="3">
-                    No returned books recorded in this session.
+                    No returned books in this session.
                 </td>
 
             </tr>
@@ -2133,30 +2500,16 @@ function renderReturnedTable() {
     returnedTableBody.innerHTML =
         returnedBooks
             .map(
-                function(record) {
+                function (record) {
 
                     return `
 
                         <tr>
 
                             <td>
-
-                                <div class="table-book">
-
-                                    <div
-                                        class="table-book-cover"
-                                    >
-                                        ✓
-                                    </div>
-
-                                    <strong>
-                                        ${escapeHTML(
-                                            record.book
-                                        )}
-                                    </strong>
-
-                                </div>
-
+                                ${escapeHTML(
+                                    record.book
+                                )}
                             </td>
 
                             <td>
@@ -2166,9 +2519,9 @@ function renderReturnedTable() {
                             </td>
 
                             <td>
-                                ${statusBadge(
-                                    "available"
-                                )}
+                                <span class="status available">
+                                    Returned
+                                </span>
                             </td>
 
                         </tr>
@@ -2184,7 +2537,7 @@ function renderReturnedTable() {
 
 /* =========================================================
    FINE TABLE
-========================================================= */
+   ========================================================= */
 
 function renderFineTable() {
 
@@ -2197,7 +2550,7 @@ function renderFineTable() {
             <tr>
 
                 <td colspan="5">
-                    No overdue books.
+                    No overdue fines recorded.
                 </td>
 
             </tr>
@@ -2212,32 +2565,17 @@ function renderFineTable() {
     fineTableBody.innerHTML =
         fines
             .map(
-                function(record, index) {
+                function (record, index) {
 
                     return `
 
                         <tr>
 
                             <td>
-
-                                <div class="table-book">
-
-                                    <div
-                                        class="table-book-cover"
-                                    >
-                                        ₹
-                                    </div>
-
-                                    <strong>
-                                        ${escapeHTML(
-                                            record.book
-                                        )}
-                                    </strong>
-
-                                </div>
-
+                                ${escapeHTML(
+                                    record.book
+                                )}
                             </td>
-
 
                             <td>
                                 ${escapeHTML(
@@ -2245,36 +2583,22 @@ function renderFineTable() {
                                 )}
                             </td>
 
-
                             <td>
                                 ${record.daysOverdue}
                             </td>
 
-
                             <td>
-
-                                <strong
-                                    style="
-                                        color: var(--red);
-                                    "
-                                >
-                                    ₹${record.fine}
-                                </strong>
-
+                                ₹${record.fine}
                             </td>
-
 
                             <td>
 
                                 <button
+                                    type="button"
                                     class="table-action"
-                                    onclick="
-                                        calculateFine(
-                                            ${index}
-                                        )
-                                    "
+                                    data-fine-index="${index}"
                                 >
-                                    Calculate
+                                    Review
                                 </button>
 
                             </td>
@@ -2287,44 +2611,52 @@ function renderFineTable() {
             )
             .join("");
 
+
+    fineTableBody
+        .querySelectorAll(
+            "[data-fine-index]"
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const index =
+                            Number(
+                                button.dataset.fineIndex
+                            );
+
+                        reviewFine(index);
+
+                    }
+                );
+
+            }
+        );
+
 }
 
 
 /* =========================================================
-   FINE CALCULATION
-========================================================= */
+   REVIEW FINE
+   ========================================================= */
 
-function calculateFine(index) {
+function reviewFine(index) {
 
     const record =
         fines[index];
 
 
     if (!record) {
-
         return;
-
     }
-
-
-    /*
-       IMPORTANT:
-
-       The SRS says the system must calculate fines
-       for overdue books, but it does NOT specify
-       the fine rate.
-
-       Therefore this frontend does not invent a
-       ₹10/day rule.
-
-       The sample record already contains a mock
-       fine amount, so we display that amount.
-    */
 
 
     showToast(
         "Fine record",
-        `${record.book}: recorded fine is ₹${record.fine}.`,
+        `${record.book} • ₹${record.fine} • ${record.daysOverdue} days overdue.`,
         "₹"
     );
 
@@ -2333,148 +2665,17 @@ function calculateFine(index) {
 
 /* =========================================================
    AVAILABILITY
-========================================================= */
-
-function renderAvailability() {
-
-    let filteredBooks =
-        books;
-
-
-    if (
-        currentAvailabilityFilter !== "all"
-    ) {
-
-        filteredBooks =
-            books.filter(
-                function(book) {
-
-                    return (
-                        book.status ===
-                        currentAvailabilityFilter
-                    );
-
-                }
-            );
-
-    }
-
-
-    if (
-        filteredBooks.length === 0
-    ) {
-
-        availabilityGrid.innerHTML = `
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    ◉
-                </div>
-
-                <strong>
-                    No books found
-                </strong>
-
-                <span>
-                    There are no books in this category.
-                </span>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    availabilityGrid.innerHTML =
-        filteredBooks
-            .map(
-                function(book) {
-
-                    return `
-
-                        <div
-                            class="availability-item"
-                        >
-
-                            <div
-                                class="availability-cover"
-                            >
-                                ${escapeHTML(
-                                    book.id
-                                )}
-                            </div>
-
-
-                            <div
-                                class="availability-info"
-                            >
-
-                                <strong>
-                                    ${escapeHTML(
-                                        book.title
-                                    )}
-                                </strong>
-
-                                <span>
-                                    ${escapeHTML(
-                                        book.author
-                                    )}
-                                </span>
-
-                                ${
-                                    book.user
-                                    ?
-                                    `
-                                        <span
-                                            class="
-                                                availability-user
-                                            "
-                                        >
-                                            Borrowed by
-                                            ${escapeHTML(
-                                                book.user
-                                            )}
-                                        </span>
-                                    `
-                                    :
-                                    ""
-                                }
-
-                            </div>
-
-
-                            ${statusBadge(
-                                book.status
-                            )}
-
-                        </div>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-}
-
-
-/* =========================================================
-   AVAILABILITY FILTER
-========================================================= */
+   ========================================================= */
 
 availabilityFilters.forEach(
-    function(button) {
+    function (button) {
 
         button.addEventListener(
             "click",
-            function() {
+            function () {
 
                 availabilityFilters.forEach(
-                    function(item) {
+                    function (item) {
 
                         item.classList.remove(
                             "active"
@@ -2502,11 +2703,145 @@ availabilityFilters.forEach(
 );
 
 
-/* =========================================================
-   SUMMARY
-========================================================= */
+function renderAvailability() {
 
-function updateSummary() {
+    let filteredBooks =
+        books;
+
+
+    if (
+        currentAvailabilityFilter !== "all"
+    ) {
+
+        filteredBooks =
+            books.filter(
+                function (book) {
+
+                    return (
+                        book.status ===
+                        currentAvailabilityFilter
+                    );
+
+                }
+            );
+
+    }
+
+
+    if (
+        filteredBooks.length === 0
+    ) {
+
+        availabilityGrid.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ◉
+                </div>
+
+                <strong>
+                    No books in this category
+                </strong>
+
+                <span>
+                    Try another availability filter.
+                </span>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    availabilityGrid.innerHTML =
+        filteredBooks
+            .map(
+                function (book, index) {
+
+                    const statusClass =
+                        book.status === "available"
+                            ? "available"
+                            : book.status === "borrowed"
+                                ? "borrowed"
+                                : "overdue";
+
+
+                    const statusText =
+                        book.status === "available"
+                            ? "Available"
+                            : book.status === "borrowed"
+                                ? "Borrowed"
+                                : "Overdue";
+
+
+                    return `
+
+                        <div
+                            class="availability-card"
+                            style="--card-index:${index};"
+                        >
+
+                            <div
+                                class="availability-cover"
+                            >
+                                ${escapeHTML(
+                                    book.id
+                                )}
+                            </div>
+
+
+                            <div
+                                class="availability-info"
+                            >
+
+                                <strong>
+                                    ${escapeHTML(
+                                        book.title
+                                    )}
+                                </strong>
+
+                                <span>
+                                    ${escapeHTML(
+                                        book.author
+                                    )}
+                                </span>
+
+
+                                <div
+                                    class="availability-bottom"
+                                >
+
+                                    <span
+                                        class="book-status ${statusClass}"
+                                    >
+                                        <span class="status-dot"></span>
+                                        ${statusText}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* =========================================================
+   METRICS
+   ========================================================= */
+
+function renderMetrics() {
 
     const total =
         books.length;
@@ -2514,11 +2849,9 @@ function updateSummary() {
 
     const available =
         books.filter(
-            function(book) {
+            function (book) {
 
-                return (
-                    book.status === "available"
-                );
+                return book.status === "available";
 
             }
         ).length;
@@ -2526,117 +2859,223 @@ function updateSummary() {
 
     const borrowed =
         books.filter(
-            function(book) {
+            function (book) {
 
-                return (
-                    book.status === "borrowed"
-                );
+                return book.status === "borrowed";
 
             }
         ).length;
 
 
     const overdue =
-        fines.length;
+        books.filter(
+            function (book) {
+
+                return book.status === "overdue";
+
+            }
+        ).length;
 
 
-    document.getElementById(
-        "total-books"
-    ).textContent =
-        total;
+    const totalBooks =
+        document.getElementById(
+            "total-books"
+        );
+
+    const availableBooks =
+        document.getElementById(
+            "available-books"
+        );
+
+    const borrowedBooks =
+        document.getElementById(
+            "borrowed-books"
+        );
+
+    const overdueBooks =
+        document.getElementById(
+            "overdue-books"
+        );
 
 
-    document.getElementById(
-        "available-books"
-    ).textContent =
-        available;
+    if (totalBooks) {
+        animateNumber(
+            totalBooks,
+            total
+        );
+    }
 
 
-    document.getElementById(
-        "borrowed-books"
-    ).textContent =
-        borrowed;
+    if (availableBooks) {
+        animateNumber(
+            availableBooks,
+            available
+        );
+    }
 
 
-    document.getElementById(
-        "overdue-books"
-    ).textContent =
-        overdue;
+    if (borrowedBooks) {
+        animateNumber(
+            borrowedBooks,
+            borrowed
+        );
+    }
 
 
-    document.getElementById(
-        "sidebar-total"
-    ).textContent =
-        `${total} book${
-            total === 1
-                ? ""
-                : "s"
-        }`;
+    if (overdueBooks) {
+        animateNumber(
+            overdueBooks,
+            overdue
+        );
+    }
+
+
+    const sidebarTotal =
+        document.getElementById(
+            "sidebar-total"
+        );
+
+
+    if (sidebarTotal) {
+
+        sidebarTotal.textContent =
+            `${total} ${total === 1 ? "book" : "books"}`;
+
+    }
+
+
+    const issueCount =
+        document.getElementById(
+            "issue-count"
+        );
+
+
+    if (issueCount) {
+
+        issueCount.textContent =
+            borrowed;
+
+    }
+
+
+    const fineBookCount =
+        document.getElementById(
+            "fine-book-count"
+        );
+
+
+    if (fineBookCount) {
+
+        fineBookCount.textContent =
+            fines.length;
+
+    }
 
 
     const totalFine =
         fines.reduce(
-            function(sum, record) {
+            function (sum, record) {
 
-                return (
-                    sum +
-                    Number(record.fine)
-                );
+                return sum + record.fine;
 
             },
             0
         );
 
 
-    document.getElementById(
-        "total-fine"
-    ).textContent =
-        `₹${totalFine}`;
+    const totalFineElement =
+        document.getElementById(
+            "total-fine"
+        );
 
 
-    document.getElementById(
-        "fine-book-count"
-    ).textContent =
-        overdue;
+    if (totalFineElement) {
 
-}
+        totalFineElement.textContent =
+            `₹${totalFine}`;
 
-
-/* =========================================================
-   RETURN CURRENT USER COUNT
-========================================================= */
-
-function updateOperationMessages() {
-
-    const issueCount =
-        books.filter(
-            function(book) {
-
-                return (
-                    book.status === "borrowed"
-                );
-
-            }
-        ).length;
-
-
-    document.getElementById(
-        "issue-count"
-    ).textContent =
-        issueCount;
+    }
 
 }
 
 
 /* =========================================================
-   RENDER ALL
-========================================================= */
+   NUMBER ANIMATION
+   ========================================================= */
+
+function animateNumber(
+    element,
+    target
+) {
+
+    const duration = 500;
+
+    const start =
+        Number(
+            element.textContent
+                .replace(/\D/g, "")
+        ) || 0;
+
+
+    const startTime =
+        performance.now();
+
+
+    function update(currentTime) {
+
+        const progress =
+            Math.min(
+                (currentTime - startTime) /
+                duration,
+                1
+            );
+
+
+        const eased =
+            1 -
+            Math.pow(
+                1 - progress,
+                3
+            );
+
+
+        const value =
+            Math.round(
+                start +
+                (target - start) *
+                eased
+            );
+
+
+        element.textContent =
+            value;
+
+
+        if (
+            progress < 1
+        ) {
+
+            requestAnimationFrame(
+                update
+            );
+
+        }
+
+    }
+
+
+    requestAnimationFrame(
+        update
+    );
+
+}
+
+
+/* =========================================================
+   RENDER EVERYTHING
+   ========================================================= */
 
 function renderAll() {
-
-    updateSummary();
-
-    updateOperationMessages();
 
     renderBookCollection(
         bookSearch.value
@@ -2658,57 +3097,14 @@ function renderAll() {
 
     renderAvailability();
 
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-function showToast(
-    title,
-    message,
-    icon = "✓"
-) {
-
-    toastTitle.textContent =
-        title;
-
-    toastMessage.textContent =
-        message;
-
-    toastIcon.textContent =
-        icon;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
-            function() {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            3200
-        );
+    renderMetrics();
 
 }
 
 
 /* =========================================================
    ESCAPE HTML
-========================================================= */
+   ========================================================= */
 
 function escapeHTML(
     value
@@ -2740,37 +3136,86 @@ function escapeHTML(
 
 
 /* =========================================================
-   ESCAPE MODALS WITH ESC
-========================================================= */
+   TOAST
+   ========================================================= */
 
-document.addEventListener(
-    "keydown",
-    function(event) {
+function showToast(
+    title,
+    message,
+    icon = "✓"
+) {
+
+    if (!toast) {
+        return;
+    }
+
+
+    toastTitle.textContent =
+        title;
+
+    toastMessage.textContent =
+        message;
+
+    toastIcon.textContent =
+        icon;
+
+
+    toast.classList.remove(
+        "show"
+    );
+
+
+    void toast.offsetWidth;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+        setTimeout(
+            function () {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3500
+        );
+
+}
+
+
+/* =========================================================
+   WINDOW CLICK
+   ========================================================= */
+
+window.addEventListener(
+    "click",
+    function (event) {
+
+        /*
+            Close sidebar when clicking outside it
+            on smaller screens.
+        */
 
         if (
-            event.key === "Escape"
+            window.innerWidth <= 760 &&
+            sidebar.classList.contains("open") &&
+            !sidebar.contains(event.target) &&
+            !menuToggle.contains(event.target)
         ) {
 
-            if (
-                !bookModal.classList.contains(
-                    "hidden"
-                )
-            ) {
-
-                closeBookModal();
-
-            }
-
-
-            if (
-                !detailModal.classList.contains(
-                    "hidden"
-                )
-            ) {
-
-                closeDetailModal();
-
-            }
+            sidebar.classList.remove(
+                "open"
+            );
 
         }
 
@@ -2779,7 +3224,22 @@ document.addEventListener(
 
 
 /* =========================================================
-   INITIALIZE
-========================================================= */
+   RESIZE
+   ========================================================= */
 
-renderAll();
+window.addEventListener(
+    "resize",
+    function () {
+
+        if (
+            window.innerWidth > 760
+        ) {
+
+            sidebar.classList.remove(
+                "open"
+            );
+
+        }
+
+    }
+);
