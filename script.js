@@ -1,3245 +1,674 @@
-/* =========================================================
-   LIBRA — DIGITAL LIBRARY
-   LEVEL 2 ENHANCED JAVASCRIPT
-   ========================================================= */
-
-
-/* =========================================================
-   MOCK DATA
-   ========================================================= */
-
-let books = [
-
-    {
-        id: "B001",
-        title: "Introduction to Python",
-        author: "Mark Lutz",
-        status: "available",
-        user: ""
-    },
-
-    {
-        id: "B002",
-        title: "Database System Concepts",
-        author: "Abraham Silberschatz",
-        status: "borrowed",
-        user: "Student A"
-    },
-
-    {
-        id: "B003",
-        title: "Computer Networks",
-        author: "Andrew S. Tanenbaum",
-        status: "available",
-        user: ""
-    },
-
-    {
-        id: "B004",
-        title: "Software Engineering",
-        author: "Ian Sommerville",
-        status: "borrowed",
-        user: "Student B"
-    },
-
-    {
-        id: "B005",
-        title: "Data Structures and Algorithms",
-        author: "Robert Lafore",
-        status: "available",
-        user: ""
-    },
-
-    {
-        id: "B006",
-        title: "Web Technologies",
-        author: "Uttam K. Roy",
-        status: "available",
-        user: ""
-    },
-
-    {
-        id: "B007",
-        title: "Operating Systems",
-        author: "Abraham Silberschatz",
-        status: "available",
-        user: ""
-    },
-
-    {
-        id: "B008",
-        title: "Computer Organization",
-        author: "Carl Hamacher",
-        status: "borrowed",
-        user: "Student C"
-    }
-
-];
-
-
-/* =========================================================
-   MOCK FINES
-   ========================================================= */
-
-let fines = [
-
-    {
-        book: "Database System Concepts",
-        user: "Student A",
-        daysOverdue: 4,
-        fine: 40
-    },
-
-    {
-        book: "Software Engineering",
-        user: "Student B",
-        daysOverdue: 2,
-        fine: 20
-    }
-
-];
-
-
-let returnedBooks = [];
-
-
-/* =========================================================
-   DOM ELEMENTS
-   ========================================================= */
-
-const loginPage =
-    document.getElementById("login-page");
-
-const app =
-    document.getElementById("app");
-
-const loginForm =
-    document.getElementById("login-form");
-
-const loginMessage =
-    document.getElementById("login-message");
-
-const profileName =
-    document.getElementById("profile-name");
-
-const profileAvatar =
-    document.getElementById("profile-avatar");
-
-const logoutButton =
-    document.getElementById("logout-button");
-
-const sidebar =
-    document.getElementById("sidebar");
-
-const menuToggle =
-    document.getElementById("menu-toggle");
-
-const closeSidebar =
-    document.getElementById("close-sidebar");
-
-const breadcrumbTitle =
-    document.getElementById("breadcrumb-title");
-
-const navItems =
-    document.querySelectorAll(".nav-item");
-
-const sections =
-    document.querySelectorAll(".page-section");
-
-const bookSearch =
-    document.getElementById("book-search");
-
-const clearSearch =
-    document.getElementById("clear-search");
-
-const headerSearchButton =
-    document.getElementById("header-search-button");
-
-const bookSort =
-    document.getElementById("book-sort");
-
-const bookCollection =
-    document.getElementById("book-collection");
-
-const bookTableBody =
-    document.getElementById("book-table-body");
-
-const availabilityGrid =
-    document.getElementById("availability-grid");
-
-const availabilityFilters =
-    document.querySelectorAll(".availability-filter");
-
-const issueForm =
-    document.getElementById("issue-form");
-
-const returnForm =
-    document.getElementById("return-form");
-
-const issueBookSelect =
-    document.getElementById("issue-book");
-
-const returnBookSelect =
-    document.getElementById("return-book");
-
-const issuedTableBody =
-    document.getElementById("issued-table-body");
-
-const returnedTableBody =
-    document.getElementById("returned-table-body");
-
-const fineTableBody =
-    document.getElementById("fine-table-body");
-
-const issueMessage =
-    document.getElementById("issue-message");
-
-const returnMessage =
-    document.getElementById("return-message");
-
-const addBookButton =
-    document.getElementById("add-book-button");
-
-const bookModal =
-    document.getElementById("book-modal");
-
-const addBookForm =
-    document.getElementById("add-book-form");
-
-const closeModal =
-    document.getElementById("close-modal");
-
-const cancelModal =
-    document.getElementById("cancel-modal");
-
-const detailModal =
-    document.getElementById("detail-modal");
-
-const closeDetail =
-    document.getElementById("close-detail");
-
-const detailUpdate =
-    document.getElementById("detail-update");
-
-const detailDelete =
-    document.getElementById("detail-delete");
-
-const togglePassword =
-    document.getElementById("toggle-password");
-
-const toast =
-    document.getElementById("toast");
-
-const toastTitle =
-    document.getElementById("toast-title");
-
-const toastMessage =
-    document.getElementById("toast-message");
-
-const toastIcon =
-    document.getElementById("toast-icon");
-
-
-/* =========================================================
-   LEVEL 2 VIEW CONTROLS
-   ========================================================= */
+const TOKEN_KEY = "lms_token";
+const USER_KEY = "lms_user";
+
+const loginPage = document.getElementById("login-page");
+const app = document.getElementById("app");
+const loginForm = document.getElementById("login-form");
+const loginMessage = document.getElementById("login-message");
+const loginButton = document.getElementById("login-button");
+const profileName = document.getElementById("profile-name");
+const profileAvatar = document.getElementById("profile-avatar");
+const logoutButton = document.getElementById("logout-button");
+const sidebar = document.getElementById("sidebar");
+const menuToggle = document.getElementById("menu-toggle");
+const closeSidebar = document.getElementById("close-sidebar");
+const pageTitle = document.getElementById("breadcrumb-title");
+const navItems = document.querySelectorAll(".nav-item");
+const sections = document.querySelectorAll(".page-section");
+const bookSearch = document.getElementById("book-search");
+const bookSort = document.getElementById("book-sort");
+const bookCollection = document.getElementById("book-collection");
+const bookTableWrap = document.getElementById("catalog-data-panel");
+const bookTableBody = document.getElementById("book-table-body");
+const availabilityGrid = document.getElementById("availability-grid");
+const issueForm = document.getElementById("issue-form");
+const returnForm = document.getElementById("return-form");
+const issueBookSelect = document.getElementById("issue-book");
+const returnBookSelect = document.getElementById("return-book");
+const issuedTableBody = document.getElementById("issued-table-body");
+const returnedTableBody = document.getElementById("returned-table-body");
+const fineTableBody = document.getElementById("fine-table-body");
+const issueMessage = document.getElementById("issue-message");
+const returnMessage = document.getElementById("return-message");
+const addBookButton = document.getElementById("add-book-button");
+const bookModal = document.getElementById("book-modal");
+const bookForm = document.getElementById("add-book-form");
+const bookFormMessage = document.getElementById("book-form-message");
+const detailModal = document.getElementById("detail-modal");
+const toast = document.getElementById("toast");
+const gridViewButton = document.getElementById("grid-view-btn");
+const listViewButton = document.getElementById("list-view-btn");
 
 let catalogView = "grid";
-
-let gridViewButton = null;
-let listViewButton = null;
-
-
-/* =========================================================
-   CURRENT STATE
-   ========================================================= */
-
-let currentDetailBookId = null;
-
-let currentAvailabilityFilter = "all";
-
+let books = [];
+let catalog = [];
+let currentBook = null;
+let availabilityFilter = "all";
 let toastTimer = null;
+let searchTimer = null;
 
+function token() {
+    return localStorage.getItem(TOKEN_KEY);
+}
 
-/* =========================================================
-   INITIALIZE
-   ========================================================= */
+function setSession(accessToken, username) {
+    localStorage.setItem(TOKEN_KEY, accessToken);
+    localStorage.setItem(USER_KEY, username);
+}
 
-document.addEventListener("DOMContentLoaded", function () {
+function clearSession() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+}
 
-    createCatalogViewControls();
+function showLogin() {
+    app.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+}
 
-    renderAll();
+function showApp(username) {
+    profileName.textContent = username;
+    profileAvatar.textContent = username.charAt(0).toUpperCase();
+    loginPage.classList.add("hidden");
+    app.classList.remove("hidden");
+}
 
-});
-
-
-/* =========================================================
-   LOGIN
-   ========================================================= */
-
-loginForm.addEventListener(
-    "submit",
-    function (event) {
-
-        event.preventDefault();
-
-        const username =
-            document
-                .getElementById("username")
-                .value
-                .trim();
-
-        const password =
-            document
-                .getElementById("password")
-                .value
-                .trim();
-
-
-        if (!username || !password) {
-
-            loginMessage.textContent =
-                "Please enter username and password.";
-
-            return;
+async function api(path, options = {}) {
+    const headers = { ...(options.headers || {}) };
+    if (options.body && !(options.body instanceof FormData)) {
+        headers["Content-Type"] = "application/json";
+    }
+    const access = token();
+    if (access) {
+        headers.Authorization = `Bearer ${access}`;
+    }
+    const response = await fetch(path, { ...options, headers });
+    let data = null;
+    const text = await response.text();
+    if (text) {
+        try {
+            data = JSON.parse(text);
+        } catch {
+            data = { detail: text };
         }
-
-
-        /*
-            Frontend-only demonstration.
-
-            Any non-empty username and password
-            are accepted because there is currently
-            no backend authentication.
-        */
-
-        profileName.textContent =
-            username;
-
-        profileAvatar.textContent =
-            username
-                .charAt(0)
-                .toUpperCase();
-
-
-        loginPage.classList.add("hidden");
-
-        app.classList.remove("hidden");
-
-        loginMessage.textContent = "";
-
-
-        /*
-            Small reset so the application
-            entrance animation plays again.
-        */
-
-        app.classList.remove("app-enter");
-
-        void app.offsetWidth;
-
-        app.classList.add("app-enter");
-
-
-        renderAll();
-
-
-        showToast(
-            "Welcome to LIBRA",
-            "Your library is ready.",
-            "✓"
-        );
-
     }
-);
-
-
-/* =========================================================
-   PASSWORD VISIBILITY
-   ========================================================= */
-
-togglePassword.addEventListener(
-    "click",
-    function () {
-
-        const password =
-            document.getElementById("password");
-
-
-        if (
-            password.type === "password"
-        ) {
-
-            password.type = "text";
-
-            togglePassword.textContent =
-                "Hide";
-
-        } else {
-
-            password.type = "password";
-
-            togglePassword.textContent =
-                "Show";
-
-        }
-
+    if (response.status === 401) {
+        clearSession();
+        showLogin();
+        throw new Error(data && data.detail ? String(data.detail) : "Not authenticated");
     }
-);
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-logoutButton.addEventListener(
-    "click",
-    function () {
-
-        app.classList.add("hidden");
-
-        loginPage.classList.remove("hidden");
-
-        document
-            .getElementById("password")
-            .value = "";
-
-        document
-            .getElementById("username")
-            .value = "";
-
-        showToast(
-            "Signed out",
-            "You have left the library.",
-            "↪"
-        );
-
+    if (!response.ok) {
+        const detail = data && data.detail ? data.detail : "Request failed";
+        throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
     }
-);
-
-
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-navItems.forEach(
-    function (item) {
-
-        item.addEventListener(
-            "click",
-            function () {
-
-                const sectionId =
-                    item.dataset.section;
-
-
-                navItems.forEach(
-                    function (nav) {
-
-                        nav.classList.remove(
-                            "active"
-                        );
-
-                    }
-                );
-
-
-                sections.forEach(
-                    function (section) {
-
-                        section.classList.remove(
-                            "active-section"
-                        );
-
-                    }
-                );
-
-
-                item.classList.add(
-                    "active"
-                );
-
-
-                const targetSection =
-                    document.getElementById(
-                        sectionId
-                    );
-
-
-                if (targetSection) {
-
-                    targetSection.classList.add(
-                        "active-section"
-                    );
-
-                }
-
-
-                const labels = {
-
-                    "book-management":
-                        "Collection",
-
-                    "book-issue":
-                        "Book Issue",
-
-                    "book-return":
-                        "Book Return",
-
-                    "fine-management":
-                        "Fine Management",
-
-                    "book-availability":
-                        "Book Availability"
-
-                };
-
-
-                breadcrumbTitle.textContent =
-                    labels[sectionId] ||
-                    "Library";
-
-
-                sidebar.classList.remove(
-                    "open"
-                );
-
-            }
-        );
-
-    }
-);
-
-
-/* =========================================================
-   MOBILE SIDEBAR
-   ========================================================= */
-
-menuToggle.addEventListener(
-    "click",
-    function () {
-
-        sidebar.classList.add(
-            "open"
-        );
-
-    }
-);
-
-
-closeSidebar.addEventListener(
-    "click",
-    function () {
-
-        sidebar.classList.remove(
-            "open"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   HEADER SEARCH
-   ========================================================= */
-
-headerSearchButton.addEventListener(
-    "click",
-    function () {
-
-        goToCollectionSearch();
-
-    }
-);
-
-
-function goToCollectionSearch() {
-
-    const collectionNav =
-        document.querySelector(
-            '[data-section="book-management"]'
-        );
-
-
-    if (collectionNav) {
-
-        collectionNav.click();
-
-    }
-
-
-    setTimeout(
-        function () {
-
-            if (bookSearch) {
-
-                bookSearch.focus();
-
-            }
-
-        },
-        100
-    );
-
+    return data;
 }
 
-
-/* =========================================================
-   KEYBOARD SEARCH
-   ========================================================= */
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (
-            event.key === "/" &&
-            document.activeElement.tagName !== "INPUT" &&
-            document.activeElement.tagName !== "SELECT" &&
-            document.activeElement.tagName !== "TEXTAREA"
-        ) {
-
-            event.preventDefault();
-
-            goToCollectionSearch();
-
-        }
-
-        /*
-            Escape closes open modals/sidebar.
-        */
-
-        if (event.key === "Escape") {
-
-            closeBookModal();
-
-            closeDetailModal();
-
-            sidebar.classList.remove(
-                "open"
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
-
-bookSearch.addEventListener(
-    "input",
-    function () {
-
-        const value =
-            bookSearch.value.trim();
-
-
-        if (value) {
-
-            clearSearch.classList.add(
-                "show"
-            );
-
-        } else {
-
-            clearSearch.classList.remove(
-                "show"
-            );
-
-        }
-
-
-        renderBookCollection(
-            value
-        );
-
-        renderBookTable(
-            value
-        );
-
-    }
-);
-
-
-clearSearch.addEventListener(
-    "click",
-    function () {
-
-        bookSearch.value = "";
-
-        clearSearch.classList.remove(
-            "show"
-        );
-
-        renderBookCollection();
-
-        renderBookTable();
-
-        bookSearch.focus();
-
-    }
-);
-
-
-/* =========================================================
-   SORT
-   ========================================================= */
-
-bookSort.addEventListener(
-    "change",
-    function () {
-
-        renderBookCollection(
-            bookSearch.value
-        );
-
-        renderBookTable(
-            bookSearch.value
-        );
-
-    }
-);
-
-
-/* =========================================================
-   LEVEL 2 — GRID / LIST VIEW
-   ========================================================= */
-
-function createCatalogViewControls() {
-
-    const toolbar =
-        document.querySelector(
-            ".collection-toolbar"
-        );
-
-
-    if (!toolbar) {
-        return;
-    }
-
-
-    /*
-        Don't create duplicate controls
-        if they already exist in HTML.
-    */
-
-    if (
-        document.getElementById(
-            "catalog-view-controls"
-        )
-    ) {
-
-        gridViewButton =
-            document.getElementById(
-                "grid-view-btn"
-            );
-
-        listViewButton =
-            document.getElementById(
-                "list-view-btn"
-            );
-
-        setupViewButtons();
-
-        return;
-    }
-
-
-    const controls =
-        document.createElement("div");
-
-    controls.id =
-        "catalog-view-controls";
-
-    controls.className =
-        "catalog-view-controls";
-
-
-    controls.innerHTML = `
-
-        <button
-            type="button"
-            id="grid-view-btn"
-            class="view-button active"
-            title="Grid view"
-            aria-label="Grid view"
-        >
-            ▦
-        </button>
-
-        <button
-            type="button"
-            id="list-view-btn"
-            class="view-button"
-            title="List view"
-            aria-label="List view"
-        >
-            ☰
-        </button>
-
-    `;
-
-
-    /*
-        Put the controls before Add Book.
-    */
-
-    const toolbarActions =
-        toolbar.querySelector(
-            ".toolbar-actions"
-        );
-
-
-    if (toolbarActions) {
-
-        toolbarActions.prepend(
-            controls
-        );
-
-    } else {
-
-        toolbar.appendChild(
-            controls
-        );
-
-    }
-
-
-    gridViewButton =
-        document.getElementById(
-            "grid-view-btn"
-        );
-
-    listViewButton =
-        document.getElementById(
-            "list-view-btn"
-        );
-
-
-    setupViewButtons();
-
+function money(value) {
+    return `₹${Number(value || 0).toFixed(0)}`;
 }
 
-
-function setupViewButtons() {
-
-    if (
-        !gridViewButton ||
-        !listViewButton
-    ) {
-
-        return;
-
+function formatDate(value) {
+    if (!value) {
+        return "—";
     }
-
-
-    gridViewButton.addEventListener(
-        "click",
-        function () {
-
-            setCatalogView("grid");
-
-        }
-    );
-
-
-    listViewButton.addEventListener(
-        "click",
-        function () {
-
-            setCatalogView("list");
-
-        }
-    );
-
+    return String(value).slice(0, 10);
 }
-
-
-function setCatalogView(view) {
-
-    catalogView = view;
-
-
-    if (
-        gridViewButton &&
-        listViewButton
-    ) {
-
-        gridViewButton.classList.toggle(
-            "active",
-            view === "grid"
-        );
-
-        listViewButton.classList.toggle(
-            "active",
-            view === "list"
-        );
-
-    }
-
-
-    if (bookCollection) {
-
-        bookCollection.classList.toggle(
-            "list-view",
-            view === "list"
-        );
-
-        bookCollection.classList.toggle(
-            "grid-view",
-            view === "grid"
-        );
-
-    }
-
-
-    renderBookCollection(
-        bookSearch.value
-    );
-
-}
-
-
-/* =========================================================
-   GET SORTED / FILTERED BOOKS
-   ========================================================= */
-
-function getProcessedBooks(
-    searchText = ""
-) {
-
-    const search =
-        searchText
-            .toLowerCase()
-            .trim();
-
-
-    let filtered =
-        books.filter(
-            function (book) {
-
-                return (
-
-                    book.title
-                        .toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    book.author
-                        .toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    book.id
-                        .toLowerCase()
-                        .includes(search)
-
-                );
-
-            }
-        );
-
-
-    const sort =
-        bookSort.value;
-
-
-    if (sort === "title") {
-
-        filtered.sort(
-            function (a, b) {
-
-                return a.title
-                    .localeCompare(b.title);
-
-            }
-        );
-
-    }
-
-
-    if (sort === "author") {
-
-        filtered.sort(
-            function (a, b) {
-
-                return a.author
-                    .localeCompare(b.author);
-
-            }
-        );
-
-    }
-
-
-    if (sort === "status") {
-
-        filtered.sort(
-            function (a, b) {
-
-                return a.status
-                    .localeCompare(b.status);
-
-            }
-        );
-
-    }
-
-
-    return filtered;
-
-}
-
-
-/* =========================================================
-   BOOK COLLECTION
-   ========================================================= */
-
-function renderBookCollection(
-    searchText = ""
-) {
-
-    if (!bookCollection) {
-        return;
-    }
-
-
-    const filteredBooks =
-        getProcessedBooks(
-            searchText
-        );
-
-
-    const resultCount =
-        document.getElementById(
-            "book-result-count"
-        );
-
-
-    if (resultCount) {
-
-        resultCount.textContent =
-            `${filteredBooks.length} book${
-                filteredBooks.length === 1
-                    ? ""
-                    : "s"
-            }`;
-
-    }
-
-
-    if (
-        filteredBooks.length === 0
-    ) {
-
-        bookCollection.innerHTML = `
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    ⌕
-                </div>
-
-                <strong>
-                    No books found
-                </strong>
-
-                <span>
-                    Try another title, author or book ID.
-                </span>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    /*
-        Level 2 premium cards.
-    */
-
-    bookCollection.innerHTML =
-        filteredBooks
-            .map(
-                function (book, index) {
-
-                    const shortTitle =
-                        getCoverTitle(
-                            book.title
-                        );
-
-
-                    const statusClass =
-                        book.status === "available"
-                            ? "available"
-                            : book.status === "borrowed"
-                                ? "borrowed"
-                                : "overdue";
-
-
-                    const statusText =
-                        book.status === "available"
-                            ? "Available"
-                            : book.status === "borrowed"
-                                ? "Borrowed"
-                                : "Overdue";
-
-
-                    /*
-                        Different visual accent for
-                        different cards.
-                    */
-
-                    const coverClass =
-                        "cover-style-" +
-                        ((index % 6) + 1);
-
-
-                    return `
-
-                        <article
-                            class="book-card ${coverClass}"
-                            data-book-id="${escapeHTML(book.id)}"
-                            style="--card-index:${index};"
-                        >
-
-                            <div
-                                class="book-cover"
-                            >
-
-                                <div class="cover-glow"></div>
-
-                                <span
-                                    class="cover-id"
-                                >
-                                    ${escapeHTML(book.id)}
-                                </span>
-
-
-                                <div
-                                    class="cover-content"
-                                >
-
-                                    <strong>
-                                        ${escapeHTML(
-                                            shortTitle
-                                        )}
-                                    </strong>
-
-                                    <span>
-                                        DIGITAL LIBRARY
-                                    </span>
-
-                                </div>
-
-
-                                <div class="cover-lines"></div>
-
-                            </div>
-
-
-                            <div
-                                class="book-card-info"
-                            >
-
-                                <div
-                                    class="book-card-title"
-                                >
-                                    ${escapeHTML(
-                                        book.title
-                                    )}
-                                </div>
-
-
-                                <div
-                                    class="book-card-author"
-                                >
-                                    ${escapeHTML(
-                                        book.author
-                                    )}
-                                </div>
-
-
-                                <div
-                                    class="book-card-bottom"
-                                >
-
-                                    <span
-                                        class="book-status ${statusClass}"
-                                    >
-                                        <span class="status-dot"></span>
-                                        ${statusText}
-                                    </span>
-
-
-                                    <button
-                                        type="button"
-                                        class="card-more"
-                                        data-action="details"
-                                        data-id="${escapeHTML(book.id)}"
-                                        title="View book details"
-                                        aria-label="View book details"
-                                    >
-                                        →
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </article>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    /*
-        Event listeners are attached with JavaScript
-        rather than relying on inline onclick handlers.
-    */
-
-    bookCollection
-        .querySelectorAll(".book-card")
-        .forEach(
-            function (card) {
-
-                card.addEventListener(
-                    "click",
-                    function () {
-
-                        const bookId =
-                            card.dataset.bookId;
-
-                        openBookDetails(
-                            bookId
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-    bookCollection
-        .querySelectorAll(
-            '[data-action="details"]'
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.stopPropagation();
-
-                        openBookDetails(
-                            button.dataset.id
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   COVER TITLE
-   ========================================================= */
-
-function getCoverTitle(title) {
-
-    const words =
-        title.split(" ");
-
-
-    if (words.length <= 2) {
-
-        return title.toUpperCase();
-
-    }
-
-
-    return words
-        .slice(0, 3)
-        .join(" ")
-        .toUpperCase();
-
-}
-
-
-/* =========================================================
-   BOOK TABLE
-   ========================================================= */
-
-function renderBookTable(
-    searchText = ""
-) {
-
-    const filteredBooks =
-        getProcessedBooks(
-            searchText
-        );
-
-
-    if (
-        filteredBooks.length === 0
-    ) {
-
-        bookTableBody.innerHTML = `
-
-            <tr>
-
-                <td colspan="5">
-                    No books found.
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    bookTableBody.innerHTML =
-        filteredBooks
-            .map(
-                function (book) {
-
-                    return `
-
-                        <tr>
-
-                            <td>
-
-                                ${escapeHTML(
-                                    book.id
-                                )}
-
-                            </td>
-
-
-                            <td>
-
-                                <div
-                                    class="table-book"
-                                >
-
-                                    <div
-                                        class="table-book-cover"
-                                    >
-                                        ${escapeHTML(
-                                            book.id
-                                        )}
-                                    </div>
-
-                                    <strong>
-                                        ${escapeHTML(
-                                            book.title
-                                        )}
-                                    </strong>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-
-                                ${escapeHTML(
-                                    book.author
-                                )}
-
-                            </td>
-
-
-                            <td>
-
-                                ${statusBadge(
-                                    book.status
-                                )}
-
-                            </td>
-
-
-                            <td>
-
-                                <button
-                                    type="button"
-                                    class="table-action"
-                                    data-action="view"
-                                    data-id="${escapeHTML(book.id)}"
-                                >
-                                    View
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    class="table-action"
-                                    data-action="edit"
-                                    data-id="${escapeHTML(book.id)}"
-                                >
-                                    Edit
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    class="table-action"
-                                    data-action="delete"
-                                    data-id="${escapeHTML(book.id)}"
-                                >
-                                    Delete
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    /*
-        Table actions.
-    */
-
-    bookTableBody
-        .querySelectorAll(
-            '[data-action="view"]'
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        openBookDetails(
-                            button.dataset.id
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-    bookTableBody
-        .querySelectorAll(
-            '[data-action="edit"]'
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        updateBook(
-                            button.dataset.id
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-    bookTableBody
-        .querySelectorAll(
-            '[data-action="delete"]'
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        deleteBook(
-                            button.dataset.id
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   STATUS BADGE
-   ========================================================= */
 
 function statusBadge(status) {
-
-    if (
-        status === "available"
-    ) {
-
-        return `
-
-            <span class="status available">
-                Available
-            </span>
-
-        `;
-
-    }
-
-
-    if (
-        status === "borrowed"
-    ) {
-
-        return `
-
-            <span class="status borrowed">
-                Borrowed
-            </span>
-
-        `;
-
-    }
-
-
-    return `
-
-        <span class="status overdue">
-            Overdue
-        </span>
-
-    `;
-
+    const label = status.charAt(0).toUpperCase() + status.slice(1);
+    return `<span class="status ${status}">${label}</span>`;
 }
 
-
-/* =========================================================
-   ADD BOOK
-   ========================================================= */
-
-addBookButton.addEventListener(
-    "click",
-    function () {
-
-        openAddBookModal();
-
-    }
-);
-
-
-function openAddBookModal() {
-
-    document.getElementById(
-        "modal-title"
-    ).textContent =
-        "Add library book";
-
-
-    addBookForm.reset();
-
-
-    bookModal.classList.remove(
-        "hidden"
-    );
-
-
-    setTimeout(
-        function () {
-
-            document
-                .getElementById(
-                    "new-book-title"
-                )
-                .focus();
-
-        },
-        100
-    );
-
+function showToast(message, title = "Success") {
+    document.getElementById("toast-title").textContent = title;
+    document.getElementById("toast-message").textContent = message;
+    document.getElementById("toast-icon").textContent = title === "Error" ? "!" : "✓";
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2800);
 }
 
-
-function closeBookModal() {
-
-    bookModal.classList.add(
-        "hidden"
-    );
-
-    addBookForm.reset();
-
+function emptyRow(cols, text) {
+    return `<tr><td colspan="${cols}">${text}</td></tr>`;
 }
 
+function emptyState(text) {
+    return `<div class="empty-state"><strong>${text}</strong></div>`;
+}
 
-closeModal.addEventListener(
-    "click",
-    closeBookModal
-);
+function coverWord(title) {
+    const word = String(title || "BOOK").trim().split(/\s+/)[0] || "BOOK";
+    return word.slice(0, 12).toUpperCase();
+}
 
+async function loadCatalog() {
+    catalog = await api("/api/books");
+    document.getElementById("sidebar-total").textContent =
+        `${catalog.length} ${catalog.length === 1 ? "book" : "books"}`;
+    renderIssueSelect();
+    renderReturnSelect();
+}
 
-cancelModal.addEventListener(
-    "click",
-    closeBookModal
-);
-
-
-bookModal.addEventListener(
-    "click",
-    function (event) {
-
-        if (
-            event.target === bookModal
-        ) {
-
-            closeBookModal();
-
-        }
-
+async function loadBooks() {
+    const params = new URLSearchParams();
+    const query = bookSearch.value.trim();
+    if (query) {
+        params.set("q", query);
     }
-);
+    params.set("sort", bookSort.value);
+    books = await api(`/api/books?${params.toString()}`);
+    renderBooks();
+}
 
+function renderBooks() {
+    document.getElementById("book-result-count").textContent =
+        `${books.length} book${books.length === 1 ? "" : "s"}`;
 
-/* =========================================================
-   ADD BOOK FORM
-   ========================================================= */
+    const showGrid = catalogView === "grid";
+    bookCollection.classList.toggle("hidden", !showGrid);
+    bookTableWrap.classList.toggle("hidden", showGrid);
 
-addBookForm.addEventListener(
-    "submit",
-    function (event) {
+    if (!books.length) {
+        bookCollection.innerHTML = emptyState("No books match this search.");
+        bookTableBody.innerHTML = emptyRow(5, "No books found.");
+        return;
+    }
 
-        event.preventDefault();
+    bookCollection.innerHTML = books.map((book) => `
+        <article class="book-card" data-id="${book.id}">
+            <div class="book-cover">
+                <span class="cover-id">${escapeHTML(book.code)}</span>
+                <div class="cover-content">
+                    <strong>${escapeHTML(coverWord(book.title))}</strong>
+                    <span>${escapeHTML(book.author)}</span>
+                </div>
+            </div>
+            <div class="book-card-info">
+                <div class="book-card-title">${escapeHTML(book.title)}</div>
+                <div class="book-card-author">${escapeHTML(book.author)}</div>
+                <div class="book-card-bottom">
+                    ${statusBadge(book.status)}
+                    <span class="card-more">›</span>
+                </div>
+            </div>
+        </article>
+    `).join("");
 
+    bookCollection.querySelectorAll(".book-card").forEach((card) => {
+        card.addEventListener("click", () => openDetails(Number(card.dataset.id)));
+    });
 
-        const title =
-            document
-                .getElementById(
-                    "new-book-title"
-                )
-                .value
-                .trim();
+    bookTableBody.innerHTML = books.map((book) => `
+        <tr>
+            <td>${escapeHTML(book.code)}</td>
+            <td>${escapeHTML(book.title)}</td>
+            <td>${escapeHTML(book.author)}</td>
+            <td>${statusBadge(book.status)}</td>
+            <td>
+                <button type="button" class="table-action" data-act="view" data-id="${book.id}">View</button>
+                <button type="button" class="table-action" data-act="edit" data-id="${book.id}">Edit</button>
+                <button type="button" class="table-action" data-act="delete" data-id="${book.id}">Delete</button>
+            </td>
+        </tr>
+    `).join("");
 
-
-        const author =
-            document
-                .getElementById(
-                    "new-book-author"
-                )
-                .value
-                .trim();
-
-
-        if (!title || !author) {
-
-            return;
-
-        }
-
-
-        const newId =
-            generateBookId();
-
-
-        books.push({
-
-            id: newId,
-
-            title: title,
-
-            author: author,
-
-            status: "available",
-
-            user: ""
-
+    bookTableBody.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("click", () => {
+            const id = Number(button.dataset.id);
+            if (button.dataset.act === "view") openDetails(id);
+            if (button.dataset.act === "edit") openBookModal(id);
+            if (button.dataset.act === "delete") deleteBook(id);
         });
-
-
-        closeBookModal();
-
-
-        renderAll();
-
-
-        showToast(
-            "Book added",
-            `"${title}" is now in your collection.`,
-            "+"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   GENERATE BOOK ID
-   ========================================================= */
-
-function generateBookId() {
-
-    let number =
-        books.length + 1;
-
-
-    let id =
-        "B" +
-        String(number)
-            .padStart(3, "0");
-
-
-    while (
-        books.some(
-            function (book) {
-
-                return book.id === id;
-
-            }
-        )
-    ) {
-
-        number++;
-
-        id =
-            "B" +
-            String(number)
-                .padStart(3, "0");
-
-    }
-
-
-    return id;
-
+    });
 }
-
-
-/* =========================================================
-   UPDATE BOOK
-   ========================================================= */
-
-function updateBook(
-    bookId
-) {
-
-    const book =
-        books.find(
-            function (item) {
-
-                return item.id === bookId;
-
-            }
-        );
-
-
-    if (!book) {
-
-        return;
-
-    }
-
-
-    const title =
-        prompt(
-            "Update book title:",
-            book.title
-        );
-
-
-    if (
-        title === null ||
-        !title.trim()
-    ) {
-
-        return;
-
-    }
-
-
-    const author =
-        prompt(
-            "Update author:",
-            book.author
-        );
-
-
-    if (
-        author === null ||
-        !author.trim()
-    ) {
-
-        return;
-
-    }
-
-
-    book.title =
-        title.trim();
-
-    book.author =
-        author.trim();
-
-
-    renderAll();
-
-
-    showToast(
-        "Book updated",
-        `"${book.title}" was updated.`,
-        "✓"
-    );
-
-}
-
-
-/* =========================================================
-   DELETE BOOK
-   ========================================================= */
-
-function deleteBook(
-    bookId
-) {
-
-    const book =
-        books.find(
-            function (item) {
-
-                return item.id === bookId;
-
-            }
-        );
-
-
-    if (!book) {
-
-        return;
-
-    }
-
-
-    if (
-        book.status === "borrowed"
-    ) {
-
-        showToast(
-            "Cannot delete",
-            "A borrowed book cannot be deleted.",
-            "!"
-        );
-
-        return;
-
-    }
-
-
-    const confirmed =
-        confirm(
-            `Delete "${book.title}" from the collection?`
-        );
-
-
-    if (!confirmed) {
-
-        return;
-
-    }
-
-
-    books =
-        books.filter(
-            function (item) {
-
-                return item.id !== bookId;
-
-            }
-        );
-
-
-    closeDetailModal();
-
-
-    renderAll();
-
-
-    showToast(
-        "Book deleted",
-        "The book was removed from the collection.",
-        "×"
-    );
-
-}
-
-
-/* =========================================================
-   BOOK DETAILS
-   ========================================================= */
-
-function openBookDetails(
-    bookId
-) {
-
-    const book =
-        books.find(
-            function (item) {
-
-                return item.id === bookId;
-
-            }
-        );
-
-
-    if (!book) {
-
-        return;
-
-    }
-
-
-    currentDetailBookId =
-        bookId;
-
-
-    document.getElementById(
-        "detail-id"
-    ).textContent =
-        book.id;
-
-
-    document.getElementById(
-        "detail-cover-title"
-    ).textContent =
-        getCoverTitle(
-            book.title
-        );
-
-
-    document.getElementById(
-        "detail-title"
-    ).textContent =
-        book.title;
-
-
-    document.getElementById(
-        "detail-author"
-    ).textContent =
-        book.author;
-
-
-    document.getElementById(
-        "detail-book-id"
-    ).textContent =
-        book.id;
-
-
-    document.getElementById(
-        "detail-status"
-    ).innerHTML =
-        statusBadge(
-            book.status
-        );
-
-
-    const userRow =
-        document.getElementById(
-            "detail-user-row"
-        );
-
-
-    if (
-        book.user
-    ) {
-
-        userRow.classList.remove(
-            "hidden"
-        );
-
-        document.getElementById(
-            "detail-user"
-        ).textContent =
-            book.user;
-
-    } else {
-
-        userRow.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    detailModal.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-function closeDetailModal() {
-
-    detailModal.classList.add(
-        "hidden"
-    );
-
-    currentDetailBookId =
-        null;
-
-}
-
-
-closeDetail.addEventListener(
-    "click",
-    closeDetailModal
-);
-
-
-detailModal.addEventListener(
-    "click",
-    function (event) {
-
-        if (
-            event.target === detailModal
-        ) {
-
-            closeDetailModal();
-
-        }
-
-    }
-);
-
-
-detailUpdate.addEventListener(
-    "click",
-    function () {
-
-        if (
-            currentDetailBookId
-        ) {
-
-            const id =
-                currentDetailBookId;
-
-            closeDetailModal();
-
-            updateBook(id);
-
-        }
-
-    }
-);
-
-
-detailDelete.addEventListener(
-    "click",
-    function () {
-
-        if (
-            currentDetailBookId
-        ) {
-
-            deleteBook(
-                currentDetailBookId
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   ISSUE SELECT
-   ========================================================= */
 
 function renderIssueSelect() {
-
-    const availableBooks =
-        books.filter(
-            function (book) {
-
-                return (
-                    book.status === "available"
-                );
-
-            }
-        );
-
-
-    if (
-        availableBooks.length === 0
-    ) {
-
-        issueBookSelect.innerHTML = `
-
-            <option value="">
-                No available books
-            </option>
-
-        `;
-
+    const available = catalog.filter((book) => book.status === "available");
+    if (!available.length) {
+        issueBookSelect.innerHTML = `<option value="">No available books</option>`;
         return;
-
     }
-
-
-    issueBookSelect.innerHTML = `
-
-        <option value="">
-            Select a book
-        </option>
-
-        ${
-            availableBooks
-                .map(
-                    function (book) {
-
-                        return `
-
-                            <option
-                                value="${escapeHTML(
-                                    book.id
-                                )}"
-                            >
-                                ${escapeHTML(
-                                    book.title
-                                )}
-                            </option>
-
-                        `;
-
-                    }
-                )
-                .join("")
-        }
-
-    `;
-
+    issueBookSelect.innerHTML = `<option value="">Select a book</option>` +
+        available.map((book) => `<option value="${book.id}">${escapeHTML(book.code)} — ${escapeHTML(book.title)}</option>`).join("");
 }
-
-
-/* =========================================================
-   RETURN SELECT
-   ========================================================= */
 
 function renderReturnSelect() {
-
-    const borrowedBooks =
-        books.filter(
-            function (book) {
-
-                return (
-                    book.status === "borrowed"
-                );
-
-            }
-        );
-
-
-    if (
-        borrowedBooks.length === 0
-    ) {
-
-        returnBookSelect.innerHTML = `
-
-            <option value="">
-                No borrowed books
-            </option>
-
-        `;
-
+    const borrowed = catalog.filter((book) => book.status === "borrowed" || book.status === "overdue");
+    if (!borrowed.length) {
+        returnBookSelect.innerHTML = `<option value="">No borrowed books</option>`;
         return;
-
     }
-
-
-    returnBookSelect.innerHTML = `
-
-        <option value="">
-            Select a book
-        </option>
-
-        ${
-            borrowedBooks
-                .map(
-                    function (book) {
-
-                        return `
-
-                            <option
-                                value="${escapeHTML(
-                                    book.id
-                                )}"
-                            >
-                                ${escapeHTML(
-                                    book.title
-                                )}
-                            </option>
-
-                        `;
-
-                    }
-                )
-                .join("")
-        }
-
-    `;
-
+    returnBookSelect.innerHTML = `<option value="">Select a book</option>` +
+        borrowed.map((book) => `<option value="${book.id}">${escapeHTML(book.code)} — ${escapeHTML(book.title)}</option>`).join("");
 }
 
-
-/* =========================================================
-   ISSUE BOOK
-   ========================================================= */
-
-issueForm.addEventListener(
-    "submit",
-    function (event) {
-
-        event.preventDefault();
-
-
-        const bookId =
-            issueBookSelect.value;
-
-        const user =
-            document
-                .getElementById(
-                    "issue-user"
-                )
-                .value
-                .trim();
-
-
-        if (!bookId || !user) {
-
-            issueMessage.textContent =
-                "Please select a book and enter a user.";
-
-            return;
-
-        }
-
-
-        const book =
-            books.find(
-                function (item) {
-
-                    return item.id === bookId;
-
-                }
-            );
-
-
-        if (!book) {
-
-            return;
-
-        }
-
-
-        if (
-            book.status !== "available"
-        ) {
-
-            issueMessage.textContent =
-                "This book is not currently available.";
-
-            return;
-
-        }
-
-
-        book.status =
-            "borrowed";
-
-        book.user =
-            user;
-
-
-        issueMessage.textContent =
-            "";
-
-
-        document
-            .getElementById(
-                "issue-user"
-            )
-            .value = "";
-
-
-        issueBookSelect.value =
-            "";
-
-
-        renderAll();
-
-
-        showToast(
-            "Book issued",
-            `"${book.title}" was issued to ${user}.`,
-            "↗"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   RETURN BOOK
-   ========================================================= */
-
-returnForm.addEventListener(
-    "submit",
-    function (event) {
-
-        event.preventDefault();
-
-
-        const bookId =
-            returnBookSelect.value;
-
-
-        if (!bookId) {
-
-            returnMessage.textContent =
-                "Please select a borrowed book.";
-
-            return;
-
-        }
-
-
-        const book =
-            books.find(
-                function (item) {
-
-                    return item.id === bookId;
-
-                }
-            );
-
-
-        if (!book) {
-
-            return;
-
-        }
-
-
-        const previousUser =
-            book.user;
-
-
-        returnedBooks.unshift({
-
-            book: book.title,
-
-            user: previousUser || "Unknown",
-
-            status: "Returned"
-
+async function loadDashboard() {
+    const data = await api("/api/dashboard");
+    document.getElementById("dash-total-books").textContent = data.total_books;
+    document.getElementById("dash-available").textContent = data.available;
+    document.getElementById("dash-borrowed").textContent = data.borrowed;
+    document.getElementById("dash-overdue").textContent = data.overdue;
+    document.getElementById("dash-outstanding").textContent = money(data.outstanding_fines);
+    document.getElementById("dash-collected").textContent = money(data.collected_fines);
+    document.getElementById("total-books").textContent = data.total_books;
+    document.getElementById("available-books").textContent = data.available;
+    document.getElementById("borrowed-books").textContent = data.borrowed;
+    document.getElementById("overdue-books").textContent = data.overdue;
+
+    document.getElementById("recent-table-body").innerHTML = data.recent_issues.length
+        ? data.recent_issues.map((item) => `
+            <tr>
+                <td>${escapeHTML(item.title)}</td>
+                <td>${escapeHTML(item.borrower)}</td>
+                <td>${statusBadge(item.status)}</td>
+            </tr>`).join("")
+        : emptyRow(3, "No circulation yet.");
+
+    document.getElementById("overdue-table-body").innerHTML = data.overdue_items.length
+        ? data.overdue_items.map((item) => `
+            <tr>
+                <td>${escapeHTML(item.title)}</td>
+                <td>${item.days_overdue}</td>
+                <td>${money(item.fine)}</td>
+            </tr>`).join("")
+        : emptyRow(3, "No overdue books.");
+}
+
+async function loadIssues() {
+    const items = await api("/api/issues?active=true");
+    document.getElementById("issue-count").textContent = String(items.length);
+    issuedTableBody.innerHTML = items.length
+        ? items.map((item) => `
+            <tr>
+                <td>${escapeHTML(item.title)}</td>
+                <td>${escapeHTML(item.borrower)}</td>
+                <td>${formatDate(item.due_at)}</td>
+                <td>${statusBadge(item.status)}</td>
+            </tr>`).join("")
+        : emptyRow(4, "No active loans.");
+}
+
+async function loadReturns() {
+    const items = await api("/api/returns");
+    returnedTableBody.innerHTML = items.length
+        ? items.map((item) => `
+            <tr>
+                <td>${escapeHTML(item.title)}</td>
+                <td>${escapeHTML(item.borrower)}</td>
+                <td>${money(item.fine)}</td>
+                <td>${statusBadge("returned")}</td>
+            </tr>`).join("")
+        : emptyRow(4, "No returned books yet.");
+}
+
+async function loadFines() {
+    const data = await api("/api/fines");
+    document.getElementById("total-fine").textContent = money(data.total);
+    document.getElementById("fine-book-count").textContent = String(data.count);
+    fineTableBody.innerHTML = data.items.length
+        ? data.items.map((item) => {
+            const canReturn = item.status !== "returned";
+            const action = canReturn
+                ? `<button type="button" class="table-action" data-return="${item.book_id}">Return</button>`
+                : "—";
+            return `
+            <tr>
+                <td>${escapeHTML(item.title)}</td>
+                <td>${escapeHTML(item.borrower)}</td>
+                <td>${item.days_overdue}</td>
+                <td>${money(item.fine)}</td>
+                <td>${action}</td>
+            </tr>`;
+        }).join("")
+        : emptyRow(5, "No overdue fines recorded.");
+
+    fineTableBody.querySelectorAll("[data-return]").forEach((button) => {
+        button.addEventListener("click", async () => {
+            try {
+                const result = await api("/api/returns", {
+                    method: "POST",
+                    body: JSON.stringify({ book_id: Number(button.dataset.return) }),
+                });
+                await refreshAll();
+                const fineNote = result.fine > 0 ? ` Fine: ${money(result.fine)}.` : "";
+                showToast(`Book returned.${fineNote}`);
+            } catch (error) {
+                showToast(error.message, "Error");
+            }
         });
-
-
-        book.status =
-            "available";
-
-        book.user =
-            "";
-
-
-        returnMessage.textContent =
-            "";
-
-
-        returnBookSelect.value =
-            "";
-
-
-        renderAll();
-
-
-        showToast(
-            "Book returned",
-            `"${book.title}" is available again.`,
-            "✓"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   ISSUE TABLE
-   ========================================================= */
-
-function renderIssuedTable() {
-
-    const borrowedBooks =
-        books.filter(
-            function (book) {
-
-                return (
-                    book.status === "borrowed"
-                );
-
-            }
-        );
-
-
-    if (
-        borrowedBooks.length === 0
-    ) {
-
-        issuedTableBody.innerHTML = `
-
-            <tr>
-
-                <td colspan="3">
-                    No active loans.
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    issuedTableBody.innerHTML =
-        borrowedBooks
-            .map(
-                function (book) {
-
-                    return `
-
-                        <tr>
-
-                            <td>
-                                ${escapeHTML(
-                                    book.title
-                                )}
-                            </td>
-
-                            <td>
-                                ${escapeHTML(
-                                    book.user
-                                )}
-                            </td>
-
-                            <td>
-                                ${statusBadge(
-                                    book.status
-                                )}
-                            </td>
-
-                        </tr>
-
-                    `;
-
-                }
-            )
-            .join("");
-
+    });
 }
 
-
-/* =========================================================
-   RETURNED TABLE
-   ========================================================= */
-
-function renderReturnedTable() {
-
-    if (
-        returnedBooks.length === 0
-    ) {
-
-        returnedTableBody.innerHTML = `
-
-            <tr>
-
-                <td colspan="3">
-                    No returned books in this session.
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    returnedTableBody.innerHTML =
-        returnedBooks
-            .map(
-                function (record) {
-
-                    return `
-
-                        <tr>
-
-                            <td>
-                                ${escapeHTML(
-                                    record.book
-                                )}
-                            </td>
-
-                            <td>
-                                ${escapeHTML(
-                                    record.user
-                                )}
-                            </td>
-
-                            <td>
-                                <span class="status available">
-                                    Returned
-                                </span>
-                            </td>
-
-                        </tr>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-}
-
-
-/* =========================================================
-   FINE TABLE
-   ========================================================= */
-
-function renderFineTable() {
-
-    if (
-        fines.length === 0
-    ) {
-
-        fineTableBody.innerHTML = `
-
-            <tr>
-
-                <td colspan="5">
-                    No overdue fines recorded.
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    fineTableBody.innerHTML =
-        fines
-            .map(
-                function (record, index) {
-
-                    return `
-
-                        <tr>
-
-                            <td>
-                                ${escapeHTML(
-                                    record.book
-                                )}
-                            </td>
-
-                            <td>
-                                ${escapeHTML(
-                                    record.user
-                                )}
-                            </td>
-
-                            <td>
-                                ${record.daysOverdue}
-                            </td>
-
-                            <td>
-                                ₹${record.fine}
-                            </td>
-
-                            <td>
-
-                                <button
-                                    type="button"
-                                    class="table-action"
-                                    data-fine-index="${index}"
-                                >
-                                    Review
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    fineTableBody
-        .querySelectorAll(
-            "[data-fine-index]"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        const index =
-                            Number(
-                                button.dataset.fineIndex
-                            );
-
-                        reviewFine(index);
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   REVIEW FINE
-   ========================================================= */
-
-function reviewFine(index) {
-
-    const record =
-        fines[index];
-
-
-    if (!record) {
+async function loadAvailability() {
+    const items = await api(`/api/availability?status=${availabilityFilter}`);
+    if (!items.length) {
+        availabilityGrid.innerHTML = emptyState("No books in this category.");
         return;
     }
-
-
-    showToast(
-        "Fine record",
-        `${record.book} • ₹${record.fine} • ${record.daysOverdue} days overdue.`,
-        "₹"
-    );
-
-}
-
-
-/* =========================================================
-   AVAILABILITY
-   ========================================================= */
-
-availabilityFilters.forEach(
-    function (button) {
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                availabilityFilters.forEach(
-                    function (item) {
-
-                        item.classList.remove(
-                            "active"
-                        );
-
-                    }
-                );
-
-
-                button.classList.add(
-                    "active"
-                );
-
-
-                currentAvailabilityFilter =
-                    button.dataset.filter;
-
-
-                renderAvailability();
-
-            }
-        );
-
-    }
-);
-
-
-function renderAvailability() {
-
-    let filteredBooks =
-        books;
-
-
-    if (
-        currentAvailabilityFilter !== "all"
-    ) {
-
-        filteredBooks =
-            books.filter(
-                function (book) {
-
-                    return (
-                        book.status ===
-                        currentAvailabilityFilter
-                    );
-
-                }
-            );
-
-    }
-
-
-    if (
-        filteredBooks.length === 0
-    ) {
-
-        availabilityGrid.innerHTML = `
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    ◉
-                </div>
-
-                <strong>
-                    No books in this category
-                </strong>
-
-                <span>
-                    Try another availability filter.
-                </span>
-
+    availabilityGrid.innerHTML = items.map((book) => `
+        <article class="availability-item">
+            <div class="availability-cover">${escapeHTML(book.code)}</div>
+            <div class="availability-info">
+                <strong>${escapeHTML(book.title)}</strong>
+                <span>${escapeHTML(book.author)}</span>
+                ${book.borrower ? `<span class="availability-user">${escapeHTML(book.borrower)}</span>` : ""}
             </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    availabilityGrid.innerHTML =
-        filteredBooks
-            .map(
-                function (book, index) {
-
-                    const statusClass =
-                        book.status === "available"
-                            ? "available"
-                            : book.status === "borrowed"
-                                ? "borrowed"
-                                : "overdue";
-
-
-                    const statusText =
-                        book.status === "available"
-                            ? "Available"
-                            : book.status === "borrowed"
-                                ? "Borrowed"
-                                : "Overdue";
-
-
-                    return `
-
-                        <div
-                            class="availability-card"
-                            style="--card-index:${index};"
-                        >
-
-                            <div
-                                class="availability-cover"
-                            >
-                                ${escapeHTML(
-                                    book.id
-                                )}
-                            </div>
-
-
-                            <div
-                                class="availability-info"
-                            >
-
-                                <strong>
-                                    ${escapeHTML(
-                                        book.title
-                                    )}
-                                </strong>
-
-                                <span>
-                                    ${escapeHTML(
-                                        book.author
-                                    )}
-                                </span>
-
-
-                                <div
-                                    class="availability-bottom"
-                                >
-
-                                    <span
-                                        class="book-status ${statusClass}"
-                                    >
-                                        <span class="status-dot"></span>
-                                        ${statusText}
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-                }
-            )
-            .join("");
-
+            ${statusBadge(book.status)}
+        </article>
+    `).join("");
 }
 
-
-/* =========================================================
-   METRICS
-   ========================================================= */
-
-function renderMetrics() {
-
-    const total =
-        books.length;
-
-
-    const available =
-        books.filter(
-            function (book) {
-
-                return book.status === "available";
-
-            }
-        ).length;
-
-
-    const borrowed =
-        books.filter(
-            function (book) {
-
-                return book.status === "borrowed";
-
-            }
-        ).length;
-
-
-    const overdue =
-        books.filter(
-            function (book) {
-
-                return book.status === "overdue";
-
-            }
-        ).length;
-
-
-    const totalBooks =
-        document.getElementById(
-            "total-books"
-        );
-
-    const availableBooks =
-        document.getElementById(
-            "available-books"
-        );
-
-    const borrowedBooks =
-        document.getElementById(
-            "borrowed-books"
-        );
-
-    const overdueBooks =
-        document.getElementById(
-            "overdue-books"
-        );
-
-
-    if (totalBooks) {
-        animateNumber(
-            totalBooks,
-            total
-        );
-    }
-
-
-    if (availableBooks) {
-        animateNumber(
-            availableBooks,
-            available
-        );
-    }
-
-
-    if (borrowedBooks) {
-        animateNumber(
-            borrowedBooks,
-            borrowed
-        );
-    }
-
-
-    if (overdueBooks) {
-        animateNumber(
-            overdueBooks,
-            overdue
-        );
-    }
-
-
-    const sidebarTotal =
-        document.getElementById(
-            "sidebar-total"
-        );
-
-
-    if (sidebarTotal) {
-
-        sidebarTotal.textContent =
-            `${total} ${total === 1 ? "book" : "books"}`;
-
-    }
-
-
-    const issueCount =
-        document.getElementById(
-            "issue-count"
-        );
-
-
-    if (issueCount) {
-
-        issueCount.textContent =
-            borrowed;
-
-    }
-
-
-    const fineBookCount =
-        document.getElementById(
-            "fine-book-count"
-        );
-
-
-    if (fineBookCount) {
-
-        fineBookCount.textContent =
-            fines.length;
-
-    }
-
-
-    const totalFine =
-        fines.reduce(
-            function (sum, record) {
-
-                return sum + record.fine;
-
-            },
-            0
-        );
-
-
-    const totalFineElement =
-        document.getElementById(
-            "total-fine"
-        );
-
-
-    if (totalFineElement) {
-
-        totalFineElement.textContent =
-            `₹${totalFine}`;
-
-    }
-
+async function refreshAll() {
+    await loadCatalog();
+    await loadBooks();
+    await Promise.all([loadDashboard(), loadIssues(), loadReturns(), loadFines(), loadAvailability()]);
 }
 
+function findBook(id) {
+    return books.find((book) => book.id === id) || catalog.find((book) => book.id === id);
+}
 
-/* =========================================================
-   NUMBER ANIMATION
-   ========================================================= */
-
-function animateNumber(
-    element,
-    target
-) {
-
-    const duration = 500;
-
-    const start =
-        Number(
-            element.textContent
-                .replace(/\D/g, "")
-        ) || 0;
-
-
-    const startTime =
-        performance.now();
-
-
-    function update(currentTime) {
-
-        const progress =
-            Math.min(
-                (currentTime - startTime) /
-                duration,
-                1
-            );
-
-
-        const eased =
-            1 -
-            Math.pow(
-                1 - progress,
-                3
-            );
-
-
-        const value =
-            Math.round(
-                start +
-                (target - start) *
-                eased
-            );
-
-
-        element.textContent =
-            value;
-
-
-        if (
-            progress < 1
-        ) {
-
-            requestAnimationFrame(
-                update
-            );
-
-        }
-
+function openDetails(id) {
+    const book = findBook(id);
+    if (!book) return;
+    currentBook = book;
+    document.getElementById("detail-id").textContent = book.code;
+    document.getElementById("detail-cover-title").textContent = coverWord(book.title);
+    document.getElementById("detail-title").textContent = book.title;
+    document.getElementById("detail-author").textContent = book.author;
+    document.getElementById("detail-book-id").textContent = book.code;
+    document.getElementById("detail-status").innerHTML = statusBadge(book.status);
+    const userRow = document.getElementById("detail-user-row");
+    if (book.borrower) {
+        userRow.classList.remove("hidden");
+        document.getElementById("detail-user").textContent = book.borrower;
+    } else {
+        userRow.classList.add("hidden");
     }
-
-
-    requestAnimationFrame(
-        update
-    );
-
+    detailModal.classList.remove("hidden");
 }
 
-
-/* =========================================================
-   RENDER EVERYTHING
-   ========================================================= */
-
-function renderAll() {
-
-    renderBookCollection(
-        bookSearch.value
-    );
-
-    renderBookTable(
-        bookSearch.value
-    );
-
-    renderIssueSelect();
-
-    renderReturnSelect();
-
-    renderIssuedTable();
-
-    renderReturnedTable();
-
-    renderFineTable();
-
-    renderAvailability();
-
-    renderMetrics();
-
+function closeDetail() {
+    detailModal.classList.add("hidden");
+    currentBook = null;
 }
 
+function openBookModal(id = null) {
+    bookForm.reset();
+    bookFormMessage.textContent = "";
+    const book = id ? findBook(id) : null;
+    document.getElementById("modal-title").textContent = book ? "Update library book" : "Add library book";
+    document.getElementById("book-save").textContent = book ? "Save changes" : "Add Book";
+    document.getElementById("edit-book-id").value = book ? String(book.id) : "";
+    document.getElementById("modal-preview-title").textContent = book ? "Update collection item" : "New collection item";
+    document.getElementById("modal-preview-note").textContent = book
+        ? "Title and author will be updated."
+        : "It will be added as available.";
+    if (book) {
+        document.getElementById("new-book-title").value = book.title;
+        document.getElementById("new-book-author").value = book.author;
+    }
+    bookModal.classList.remove("hidden");
+    document.getElementById("new-book-title").focus();
+}
 
-/* =========================================================
-   ESCAPE HTML
-   ========================================================= */
+function closeBookModal() {
+    bookModal.classList.add("hidden");
+    bookForm.reset();
+}
 
-function escapeHTML(
-    value
-) {
+async function deleteBook(id) {
+    const book = findBook(id);
+    if (!book) return;
+    if (!window.confirm(`Delete "${book.title}" from the catalog?`)) return;
+    try {
+        await api(`/api/books/${id}`, { method: "DELETE" });
+        closeDetail();
+        await refreshAll();
+        showToast("Book deleted.");
+    } catch (error) {
+        showToast(error.message, "Error");
+    }
+}
 
+function setCatalogView(view) {
+    catalogView = view;
+    gridViewButton.classList.toggle("active", view === "grid");
+    listViewButton.classList.toggle("active", view === "list");
+    renderBooks();
+}
+
+function goTo(sectionId) {
+    navItems.forEach((item) => item.classList.toggle("active", item.dataset.section === sectionId));
+    sections.forEach((section) => section.classList.toggle("active-section", section.id === sectionId));
+    const labels = {
+        dashboard: "Dashboard",
+        "book-management": "Collection",
+        "book-issue": "Book Issue",
+        "book-return": "Book Return",
+        "fine-management": "Fine Management",
+        "book-availability": "Availability",
+    };
+    pageTitle.textContent = labels[sectionId] || "Library";
+    sidebar.classList.remove("open");
+}
+
+function escapeHTML(value) {
     return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
 }
 
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-function showToast(
-    title,
-    message,
-    icon = "✓"
-) {
-
-    if (!toast) {
+loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    loginMessage.textContent = "";
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+    if (!username || !password) {
+        loginMessage.textContent = "Please enter username and password.";
         return;
     }
+    loginButton.disabled = true;
+    try {
+        const data = await api("/api/login", {
+            method: "POST",
+            body: JSON.stringify({ username, password }),
+        });
+        setSession(data.token, data.username);
+        showApp(data.username);
+        await refreshAll();
+        showToast(`Welcome, ${data.username}.`);
+    } catch (error) {
+        loginMessage.textContent = error.message;
+    } finally {
+        loginButton.disabled = false;
+    }
+});
 
+document.getElementById("toggle-password").addEventListener("click", () => {
+    const field = document.getElementById("password");
+    const hidden = field.type === "password";
+    field.type = hidden ? "text" : "password";
+    document.getElementById("toggle-password").textContent = hidden ? "Hide" : "Show";
+});
 
-    toastTitle.textContent =
-        title;
+logoutButton.addEventListener("click", () => {
+    clearSession();
+    showLogin();
+    loginForm.reset();
+    showToast("Signed out.", "Session");
+});
 
-    toastMessage.textContent =
-        message;
+navItems.forEach((item) => {
+    item.addEventListener("click", () => goTo(item.dataset.section));
+});
 
-    toastIcon.textContent =
-        icon;
+menuToggle.addEventListener("click", () => sidebar.classList.add("open"));
+closeSidebar.addEventListener("click", () => sidebar.classList.remove("open"));
 
+bookSearch.addEventListener("input", () => {
+    document.getElementById("clear-search").classList.toggle("show", Boolean(bookSearch.value));
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadBooks().catch((error) => showToast(error.message, "Error")), 200);
+});
+document.getElementById("clear-search").addEventListener("click", () => {
+    bookSearch.value = "";
+    document.getElementById("clear-search").classList.remove("show");
+    loadBooks().catch((error) => showToast(error.message, "Error"));
+});
+bookSort.addEventListener("change", () => loadBooks().catch((error) => showToast(error.message, "Error")));
+gridViewButton.addEventListener("click", () => setCatalogView("grid"));
+listViewButton.addEventListener("click", () => setCatalogView("list"));
+addBookButton.addEventListener("click", () => openBookModal());
+document.getElementById("close-modal").addEventListener("click", closeBookModal);
+document.getElementById("cancel-modal").addEventListener("click", closeBookModal);
+document.getElementById("close-detail").addEventListener("click", closeDetail);
+document.getElementById("detail-update").addEventListener("click", () => {
+    const id = currentBook && currentBook.id;
+    closeDetail();
+    if (id) openBookModal(id);
+});
+document.getElementById("detail-delete").addEventListener("click", () => {
+    if (currentBook) deleteBook(currentBook.id);
+});
+document.getElementById("header-search-button").addEventListener("click", () => {
+    goTo("book-management");
+    bookSearch.focus();
+});
 
-    toast.classList.remove(
-        "show"
-    );
+bookModal.addEventListener("click", (event) => {
+    if (event.target === bookModal) closeBookModal();
+});
+detailModal.addEventListener("click", (event) => {
+    if (event.target === detailModal) closeDetail();
+});
 
+bookForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const title = document.getElementById("new-book-title").value.trim();
+    const author = document.getElementById("new-book-author").value.trim();
+    const editId = document.getElementById("edit-book-id").value;
+    if (!title || !author) {
+        bookFormMessage.textContent = "Title and author are required.";
+        return;
+    }
+    try {
+        if (editId) {
+            await api(`/api/books/${editId}`, {
+                method: "PUT",
+                body: JSON.stringify({ title, author }),
+            });
+            showToast("Book updated.");
+        } else {
+            await api("/api/books", {
+                method: "POST",
+                body: JSON.stringify({ title, author }),
+            });
+            showToast("Book added.");
+        }
+        closeBookModal();
+        await refreshAll();
+    } catch (error) {
+        bookFormMessage.textContent = error.message;
+    }
+});
 
-    void toast.offsetWidth;
+issueForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    issueMessage.textContent = "";
+    const bookId = Number(issueBookSelect.value);
+    const borrower = document.getElementById("issue-user").value.trim();
+    if (!bookId || !borrower) {
+        issueMessage.textContent = "Select a book and enter a borrower name.";
+        return;
+    }
+    try {
+        await api("/api/issues", {
+            method: "POST",
+            body: JSON.stringify({ book_id: bookId, borrower }),
+        });
+        issueForm.reset();
+        await refreshAll();
+        showToast("Book issued.");
+    } catch (error) {
+        issueMessage.textContent = error.message;
+    }
+});
 
+returnForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    returnMessage.textContent = "";
+    const bookId = Number(returnBookSelect.value);
+    if (!bookId) {
+        returnMessage.textContent = "Select a borrowed book.";
+        return;
+    }
+    try {
+        const result = await api("/api/returns", {
+            method: "POST",
+            body: JSON.stringify({ book_id: bookId }),
+        });
+        returnForm.reset();
+        await refreshAll();
+        const fineNote = result.fine > 0 ? ` Fine: ${money(result.fine)}.` : "";
+        showToast(`Book returned.${fineNote}`);
+    } catch (error) {
+        returnMessage.textContent = error.message;
+    }
+});
 
-    toast.classList.add(
-        "show"
-    );
+document.querySelectorAll(".availability-filter").forEach((button) => {
+    button.addEventListener("click", async () => {
+        document.querySelectorAll(".availability-filter").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        availabilityFilter = button.dataset.filter;
+        try {
+            await loadAvailability();
+        } catch (error) {
+            showToast(error.message, "Error");
+        }
+    });
+});
 
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        closeBookModal();
+        closeDetail();
+        sidebar.classList.remove("open");
+    }
+    const typing = event.target.matches("input, textarea, select");
+    if (event.key === "/" && !typing) {
+        event.preventDefault();
+        goTo("book-management");
+        bookSearch.focus();
+    }
+});
 
-    clearTimeout(
-        toastTimer
-    );
+window.addEventListener("click", (event) => {
+    if (window.innerWidth <= 980 && sidebar.classList.contains("open") &&
+        !sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
+        sidebar.classList.remove("open");
+    }
+});
 
-
-    toastTimer =
-        setTimeout(
-            function () {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            3500
-        );
-
+async function boot() {
+    const saved = token();
+    const username = localStorage.getItem(USER_KEY);
+    if (!saved || !username) {
+        showLogin();
+        return;
+    }
+    try {
+        await api("/api/me");
+        showApp(username);
+        await refreshAll();
+    } catch {
+        clearSession();
+        showLogin();
+    }
 }
 
-
-/* =========================================================
-   WINDOW CLICK
-   ========================================================= */
-
-window.addEventListener(
-    "click",
-    function (event) {
-
-        /*
-            Close sidebar when clicking outside it
-            on smaller screens.
-        */
-
-        if (
-            window.innerWidth <= 760 &&
-            sidebar.classList.contains("open") &&
-            !sidebar.contains(event.target) &&
-            !menuToggle.contains(event.target)
-        ) {
-
-            sidebar.classList.remove(
-                "open"
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   RESIZE
-   ========================================================= */
-
-window.addEventListener(
-    "resize",
-    function () {
-
-        if (
-            window.innerWidth > 760
-        ) {
-
-            sidebar.classList.remove(
-                "open"
-            );
-
-        }
-
-    }
-);
+boot();

@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run LMS API",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": ["main:app", "--reload", "--host", "127.0.0.1", "--port", "8000"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Open LMS in Chrome",
+            "url": "http://127.0.0.1:8000",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}

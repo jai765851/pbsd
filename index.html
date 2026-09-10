@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>LIBRA | Digital Library</title>
+    <title>Library Management System | LIBRA</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -179,6 +179,7 @@
 
                 <button
                     type="submit"
+                    id="login-button"
                     class="main-button login-button"
                 >
                     <span>Access Library</span>
@@ -197,7 +198,7 @@
 
                 <span class="footer-dot"></span>
 
-                Frontend demonstration interface
+                Default login: admin / admin123
 
             </div>
 
@@ -288,6 +289,24 @@
 
             <button
                 class="nav-item active"
+                data-section="dashboard"
+            >
+
+                <span class="nav-icon">▣</span>
+
+                <span>
+                    Dashboard
+                </span>
+
+                <span class="nav-arrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
                 data-section="book-management"
             >
 
@@ -447,7 +466,7 @@
                     <i>/</i>
 
                     <strong id="breadcrumb-title">
-                        Collection
+                        Dashboard
                     </strong>
 
                 </div>
@@ -516,8 +535,241 @@
             ================================================== -->
 
             <section
-                id="book-management"
+                id="dashboard"
                 class="page-section active-section"
+            >
+
+                <div class="page-top">
+
+                    <div>
+
+                        <span class="section-label">
+                            OVERVIEW
+                        </span>
+
+                        <h1>
+                            Dashboard
+                        </h1>
+
+                        <p>
+                            Collection totals, circulation, overdue books,
+                            and fine amounts at a glance.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="catalog-metrics">
+
+                    <div class="metric">
+
+                        <span>
+                            COLLECTION
+                        </span>
+
+                        <strong id="dash-total-books">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric metric-green">
+
+                        <span>
+                            AVAILABLE
+                        </span>
+
+                        <strong id="dash-available">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric metric-violet">
+
+                        <span>
+                            BORROWED
+                        </span>
+
+                        <strong id="dash-borrowed">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric metric-red">
+
+                        <span>
+                            OVERDUE
+                        </span>
+
+                        <strong id="dash-overdue">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="fine-overview">
+
+                    <div class="fine-main">
+
+                        <span>
+                            OUTSTANDING FINES
+                        </span>
+
+                        <strong id="dash-outstanding">
+                            ₹0
+                        </strong>
+
+                        <small>
+                            Unreturned overdue books, ₹10 per day after 14 days
+                        </small>
+
+                        <div class="fine-glow"></div>
+
+                    </div>
+
+
+                    <div class="fine-stat">
+
+                        <span>
+                            COLLECTED FINES
+                        </span>
+
+                        <strong id="dash-collected">
+                            ₹0
+                        </strong>
+
+                        <small>
+                            Recorded on returned books
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="data-panel">
+
+                    <div class="data-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                CIRCULATION
+                            </span>
+
+                            <h3>
+                                Recent issues
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Book
+                                    </th>
+
+                                    <th>
+                                        Borrower
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="recent-table-body"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <div class="data-panel">
+
+                    <div class="data-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                REPORT
+                            </span>
+
+                            <h3>
+                                Overdue books
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Book
+                                    </th>
+
+                                    <th>
+                                        Days overdue
+                                    </th>
+
+                                    <th>
+                                        Fine
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="overdue-table-body"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section
+                id="book-management"
+                class="page-section"
             >
 
 
@@ -727,7 +979,10 @@
 
                 <!-- TABLE FALLBACK / DATA VIEW -->
 
-                <div class="catalog-data-panel">
+                <div
+                    id="catalog-data-panel"
+                    class="catalog-data-panel hidden"
+                >
 
                     <div class="data-panel-header">
 
@@ -995,7 +1250,11 @@
                                     </th>
 
                                     <th>
-                                        User
+                                        Borrower
+                                    </th>
+
+                                    <th>
+                                        Due
                                     </th>
 
                                     <th>
@@ -1170,7 +1429,11 @@
                                     </th>
 
                                     <th>
-                                        Previous User
+                                        Previous borrower
+                                    </th>
+
+                                    <th>
+                                        Fine
                                     </th>
 
                                     <th>
@@ -1239,7 +1502,7 @@
                         </strong>
 
                         <small>
-                            Total from current sample records
+                            ₹10 per day after the 14-day loan period
                         </small>
 
                         <div class="fine-glow"></div>
@@ -1383,6 +1646,13 @@
                             Borrowed
                         </button>
 
+                        <button
+                            class="availability-filter"
+                            data-filter="overdue"
+                        >
+                            Overdue
+                        </button>
+
                     </div>
 
                 </div>
@@ -1439,6 +1709,10 @@
 
         <form id="add-book-form">
 
+            <input type="hidden" id="edit-book-id" value="">
+
+            <p id="book-form-message" class="form-message"></p>
+
             <div class="field">
 
                 <label for="new-book-title">
@@ -1479,11 +1753,11 @@
 
                 <div>
 
-                    <strong>
+                    <strong id="modal-preview-title">
                         New collection item
                     </strong>
 
-                    <span>
+                    <span id="modal-preview-note">
                         It will be added as available.
                     </span>
 
@@ -1504,6 +1778,7 @@
 
                 <button
                     type="submit"
+                    id="book-save"
                     class="main-button"
                 >
                     Add Book
