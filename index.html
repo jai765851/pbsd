@@ -122,18 +122,39 @@
 
             <div class="login-title">
 
-                <span class="section-label">
+                <span class="section-label" id="auth-section-label">
                     WELCOME BACK
                 </span>
 
-                <h2>
-                    Enter your
-                    <span>library.</span>
+                <h2 id="auth-heading">
+                    <span id="auth-heading-main">Enter your</span>
+                    <span id="auth-heading-accent">library.</span>
                 </h2>
 
-                <p>
+                <p id="auth-subtitle">
                     Sign in to continue to your digital library.
                 </p>
+
+                <div class="auth-tabs" role="tablist" aria-label="Authentication Options">
+                    <button
+                        type="button"
+                        id="tab-login"
+                        class="auth-tab active"
+                        role="tab"
+                        aria-selected="true"
+                    >
+                        Sign In
+                    </button>
+                    <button
+                        type="button"
+                        id="tab-register"
+                        class="auth-tab"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        Create Account
+                    </button>
+                </div>
 
             </div>
 
@@ -142,7 +163,7 @@
 
                 <div class="field">
 
-                    <label for="username">
+                    <label for="username" id="username-label">
                         Username
                     </label>
 
@@ -171,7 +192,7 @@
                             Password
                         </label>
 
-                        <span>
+                        <span id="password-req-hint">
                             Required
                         </span>
 
@@ -202,14 +223,49 @@
                 </div>
 
 
+                <div class="field hidden" id="confirm-password-field">
+
+                    <div class="field-label-row">
+
+                        <label for="confirm-password">
+                            Confirm Password
+                        </label>
+
+                        <span>
+                            Required
+                        </span>
+
+                    </div>
+
+                    <div class="input-shell">
+
+                        <span class="input-icon">◆</span>
+
+                        <input
+                            type="password"
+                            id="confirm-password"
+                            placeholder="Re-enter your password"
+                            autocomplete="new-password"
+                        >
+
+                    </div>
+
+                </div>
+
+
                 <button
                     type="submit"
                     id="login-button"
                     class="main-button login-button"
                 >
-                    <span>Access Library</span>
+                    <span id="login-button-text">Access Library</span>
                     <span class="button-arrow">→</span>
                 </button>
+
+                <div class="auth-switch-prompt">
+                    <span id="auth-switch-prompt-text">Don't have an account?</span>
+                    <button type="button" id="auth-switch-link" class="auth-switch-link">Create Account</button>
+                </div>
 
                 <p
                     id="login-message"
@@ -219,7 +275,7 @@
             </form>
 
 
-            <div class="login-footer">
+            <div class="login-footer" id="login-default-hint">
 
                 <span class="footer-dot"></span>
 

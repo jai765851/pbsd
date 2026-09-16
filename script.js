@@ -462,25 +462,126 @@ function escapeHTML(value) {
         .replace(/"/g, "&quot;");
 }
 
+let authMode = "login"; // "login" or "register"
+
+function setAuthMode(mode) {
+    authMode = mode;
+    loginMessage.textContent = "";
+
+    const isRegister = mode === "register";
+    const tabLogin = document.getElementById("tab-login");
+    const tabRegister = document.getElementById("tab-register");
+    const authSectionLabel = document.getElementById("auth-section-label");
+    const authHeadingMain = document.getElementById("auth-heading-main");
+    const authHeadingAccent = document.getElementById("auth-heading-accent");
+    const authSubtitle = document.getElementById("auth-subtitle");
+    const confirmField = document.getElementById("confirm-password-field");
+    const loginButtonText = document.getElementById("login-button-text");
+    const authSwitchPromptText = document.getElementById("auth-switch-prompt-text");
+    const authSwitchLink = document.getElementById("auth-switch-link");
+    const loginDefaultHint = document.getElementById("login-default-hint");
+    const passwordInput = document.getElementById("password");
+    const passwordReqHint = document.getElementById("password-req-hint");
+
+    if (tabLogin) {
+        tabLogin.classList.toggle("active", !isRegister);
+        tabLogin.setAttribute("aria-selected", !isRegister);
+    }
+    if (tabRegister) {
+        tabRegister.classList.toggle("active", isRegister);
+        tabRegister.setAttribute("aria-selected", isRegister);
+    }
+    if (authSectionLabel) {
+        authSectionLabel.textContent = isRegister ? "NEW MEMBERSHIP" : "WELCOME BACK";
+    }
+    if (authHeadingMain) {
+        authHeadingMain.textContent = isRegister ? "Create your " : "Enter your ";
+    }
+    if (authHeadingAccent) {
+        authHeadingAccent.textContent = isRegister ? "account." : "library.";
+    }
+    if (authSubtitle) {
+        authSubtitle.textContent = isRegister
+            ? "Register a new account to access the digital catalog."
+            : "Sign in to continue to your digital library.";
+    }
+    if (confirmField) {
+        confirmField.classList.toggle("hidden", !isRegister);
+    }
+    if (loginButtonText) {
+        loginButtonText.textContent = isRegister ? "Create Account" : "Access Library";
+    }
+    if (authSwitchPromptText) {
+        authSwitchPromptText.textContent = isRegister ? "Already have an account?" : "Don't have an account?";
+    }
+    if (authSwitchLink) {
+        authSwitchLink.textContent = isRegister ? "Sign In" : "Create Account";
+    }
+    if (loginDefaultHint) {
+        loginDefaultHint.classList.toggle("hidden", isRegister);
+    }
+    if (passwordInput) {
+        passwordInput.autocomplete = isRegister ? "new-password" : "current-password";
+    }
+    if (passwordReqHint) {
+        passwordReqHint.textContent = isRegister ? "Min 4 characters" : "Required";
+    }
+}
+
+document.getElementById("tab-login")?.addEventListener("click", () => setAuthMode("login"));
+document.getElementById("tab-register")?.addEventListener("click", () => setAuthMode("register"));
+document.getElementById("auth-switch-link")?.addEventListener("click", () => {
+    setAuthMode(authMode === "login" ? "register" : "login");
+});
+
 loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     loginMessage.textContent = "";
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password")?.value || "";
+
     if (!username || !password) {
         loginMessage.textContent = "Please enter username and password.";
         return;
     }
+
+    if (authMode === "register") {
+        if (username.length < 3) {
+            loginMessage.textContent = "Username must be at least 3 characters long.";
+            return;
+        }
+        if (password.length < 4) {
+            loginMessage.textContent = "Password must be at least 4 characters long.";
+            return;
+        }
+        if (password !== confirmPassword) {
+            loginMessage.textContent = "Passwords do not match.";
+            return;
+        }
+    }
+
     loginButton.disabled = true;
     try {
-        const data = await api("/api/login", {
-            method: "POST",
-            body: JSON.stringify({ username, password }),
-        });
-        setSession(data.token, data.username);
-        showApp(data.username);
-        await refreshAll();
-        showToast(`Welcome, ${data.username}.`);
+        if (authMode === "register") {
+            const data = await api("/api/register", {
+                method: "POST",
+                body: JSON.stringify({ username, password }),
+            });
+            setSession(data.token, data.username);
+            showApp(data.username);
+            await refreshAll();
+            showToast(`Account created! Welcome, ${data.username}.`);
+        } else {
+            const data = await api("/api/login", {
+                method: "POST",
+                body: JSON.stringify({ username, password }),
+            });
+            setSession(data.token, data.username);
+            showApp(data.username);
+            await refreshAll();
+            showToast(`Welcome, ${data.username}.`);
+        }
     } catch (error) {
         loginMessage.textContent = error.message;
     } finally {
@@ -497,6 +598,7 @@ document.getElementById("toggle-password").addEventListener("click", () => {
 
 logoutButton.addEventListener("click", () => {
     clearSession();
+    setAuthMode("login");
     showLogin();
     loginForm.reset();
     showToast("Signed out.", "Session");
