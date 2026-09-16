@@ -1,0 +1,6 @@
+{
+  "name": "LIBRA | Digital Library Management System",
+  "description": "LIBRA is a modern digital library management system for managing books, issues, returns, fines, availability, and library records.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
