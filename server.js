@@ -3,6 +3,7 @@ import cors from "cors";
 import path from "path";
 import jwt from "jsonwebtoken";
 import { fileURLToPath } from "url";
+import { GoogleGenAI } from "@google/genai";
 import {
   verifyPassword,
   findUserByUsername,
@@ -27,6 +28,23 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
+
+// Initialize Gemini client securely on the server
+let genAI = null;
+if (process.env.GEMINI_API_KEY) {
+  try {
+    genAI = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+      httpOptions: {
+        headers: {
+          "User-Agent": "aistudio-build",
+        },
+      },
+    });
+  } catch (err) {
+    console.warn("[Gemini] Failed to instantiate GoogleGenAI client:", err.message);
+  }
+}
 
 app.use(cors());
 app.use(express.json());
@@ -279,7 +297,143 @@ app.get("/api/availability", authRequired, async (req, res) => {
 });
 
 // ---------------------------------------------------------
-// STATIC ASSETS & HEALTH
+// AI INTELLIGENCE ASSISTANT (Natural Language Search, Circulation Insights & Recommendations)
+// ---------------------------------------------------------
+app.post("/api/ai/query", authRequired, async (req, res) => {
+  try {
+    const query = String(req.body?.query || "").trim();
+    if (!query) {
+      return res.status(400).json({ detail: "Query is required" });
+    }
+
+    // Gather live library data context
+    const [stats, catalog, fines, availability, issues] = await Promise.all([
+      getDashboardData(),
+      getBooksCatalog("", "default"),
+      getFinesSummary(),
+      getAvailabilityList("all"),
+      getIssuesList(true),
+    ]);
+
+    const activeFinesTotal = fines?.total || 0;
+    const catalogSummary = catalog.map((b) => ({
+      code: b.code,
+      title: b.title,
+      author: b.author,
+      status: b.status,
+      borrower: b.borrower || null,
+    }));
+
+    let answer = "";
+    let source = "gemini";
+
+    // Attempt Gemini API call if client is available
+    if (genAI && process.env.GEMINI_API_KEY) {
+      try {
+        const systemPrompt = `You are "LIBRA Intelligence", the built-in AI Assistant for the LIBRA Digital Library Management System.
+You have real-time access to the library's live database and circulation state:
+- Metrics: Total Books: ${stats.total_books}, Available: ${stats.available}, Borrowed: ${stats.borrowed}, Overdue: ${stats.overdue}, Outstanding Fines: ₹${stats.outstanding_fines}, Collected Fines: ₹${stats.collected_fines}.
+- Books in Catalog (${catalog.length}):
+${JSON.stringify(catalogSummary, null, 2)}
+- Active Loans (${issues.length}):
+${JSON.stringify(issues.map((i) => ({ code: i.code, title: i.title, borrower: i.borrower, due_at: i.due_at, status: i.status })), null, 2)}
+- Overdue Fines Report (${fines.count} items, Total: ₹${activeFinesTotal}):
+${JSON.stringify(fines.items, null, 2)}
+
+Provide concise, friendly, and structured responses with Markdown formatting:
+- If asked to search or find books, check titles, authors, and availability, quoting book codes (e.g. B001, B002).
+- If asked for recommendations, consider availability and explain why the book fits their interest.
+- If asked about overdue books or fines, list who owes what and advise returning them.
+- If asked about library performance or bottlenecks, provide 2-3 data-driven recommendations.
+- Keep tone professional, futuristic, and helpful. Always cite book codes accurately.`;
+
+        const response = await genAI.models.generateContent({
+          model: "gemini-3.8-flash",
+          contents: query,
+          config: {
+            systemInstruction: systemPrompt,
+            temperature: 0.7,
+          },
+        });
+
+        answer = response.text || "";
+      } catch (geminiErr) {
+        console.warn("[Gemini API Warning] Falling back to local intelligence engine:", geminiErr.message);
+        source = "local_intelligence";
+      }
+    } else {
+      source = "local_intelligence";
+    }
+
+    // Deterministic fallback engine if Gemini is offline or not configured
+    if (!answer) {
+      const qLower = query.toLowerCase();
+
+      if (qLower.includes("fine") || qLower.includes("overdue") || qLower.includes("owing") || qLower.includes("due")) {
+        if (fines.items && fines.items.length > 0) {
+          const fineList = fines.items
+            .map((f) => `- **${f.title}** (${f.borrower}): ${f.days_overdue} days overdue — Fine: ₹${f.fine}`)
+            .join("\n");
+          answer = `### 📋 Overdue Fines Report\n\nThere are currently **${fines.count}** overdue book(s) with **₹${fines.total}** in outstanding fines:\n\n${fineList}\n\n*Tip: You can navigate to **Fine Management** to record returns and clear outstanding liabilities.*`;
+        } else {
+          answer = `### 📋 Overdue Fines Report\n\nAll loans are in good standing! There are currently **no overdue books** and outstanding fines are **₹0**.`;
+        }
+      } else if (qLower.includes("available") || qLower.includes("in stock") || qLower.includes("free")) {
+        const availableBooks = catalog.filter((b) => b.status === "available");
+        const list = availableBooks
+          .map((b) => `- **${b.code}**: "${b.title}" by ${b.author}`)
+          .join("\n");
+        answer = `### 📚 Available Books (${availableBooks.length}/${catalog.length})\n\nThe following books are ready for checkout:\n\n${list}\n\n*You can issue any of these books immediately from the **Book Issue** section.*`;
+      } else if (qLower.includes("recommend") || qLower.includes("suggestion") || qLower.includes("what should i read")) {
+        const available = catalog.filter((b) => b.status === "available");
+        const picks = available.slice(0, 3);
+        const list = picks
+          .map((b) => `- **${b.code} — ${b.title}** by ${b.author}: Status: **Available**`)
+          .join("\n");
+        answer = `### ✦ Recommended Reading\n\nBased on our current collection availability, here are top picks:\n\n${list}\n\n*Would you like to issue any of these or search for a specific domain like Databases, AI, or Networking?*`;
+      } else if (qLower.includes("metric") || qLower.includes("stat") || qLower.includes("health") || qLower.includes("overview") || qLower.includes("summary")) {
+        answer = `### 📊 Library Circulation Summary\n\n- **Total Collection:** ${stats.total_books} books\n- **Available for Loan:** ${stats.available} books (${Math.round((stats.available / (stats.total_books || 1)) * 100)}%)\n- **Currently Borrowed:** ${stats.borrowed} books\n- **Overdue Books:** ${stats.overdue} books\n- **Outstanding Fines:** ₹${stats.outstanding_fines}\n- **Collected Fines:** ₹${stats.collected_fines}\n\n*Collection health is stable. Regular returns maintain high book circulation turnaround.*`;
+      } else {
+        // Natural language catalog search
+        const matches = catalog.filter((b) => {
+          const matchTitle = qLower.split(/\s+/).some((term) => term.length > 2 && b.title.toLowerCase().includes(term));
+          const matchAuthor = qLower.split(/\s+/).some((term) => term.length > 2 && b.author.toLowerCase().includes(term));
+          return matchTitle || matchAuthor;
+        });
+
+        if (matches.length > 0) {
+          const list = matches
+            .map((b) => `- **${b.code}**: "${b.title}" by ${b.author} [${b.status.toUpperCase()}]${b.borrower ? ` (borrowed by ${b.borrower})` : ""}`)
+            .join("\n");
+          answer = `### 🔍 Catalog Search Results\n\nFound **${matches.length}** matching book(s) in the library collection:\n\n${list}`;
+        } else {
+          answer = `### ✦ LIBRA Intelligence\n\nI searched the library collection for "${query}". Currently, no exact title or author match was found in the ${catalog.length} cataloged titles.\n\n**Quick suggestions:**\n- Ask: *"Which books are available?"*\n- Ask: *"Show overdue fines"* \n- Ask: *"Recommend programming books"*`;
+        }
+      }
+    }
+
+    // Extract any referenced books for interactive UI cards
+    const referencedBooks = catalog.filter((b) => {
+      const codeRegex = new RegExp(`\\b${b.code}\\b`, "i");
+      const titleLower = b.title.toLowerCase();
+      return codeRegex.test(answer) || answer.toLowerCase().includes(titleLower);
+    });
+
+    res.json({
+      query,
+      answer,
+      source,
+      referencedBooks: referencedBooks.slice(0, 4),
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("[API POST /api/ai/query] Error:", err);
+    res.status(500).json({ detail: "AI assistant query failed: " + err.message });
+  }
+});
+
+// ---------------------------------------------------------
+// STATIC ASSETS, PWA & HEALTH
 // ---------------------------------------------------------
 
 app.get("/health", (req, res) => {
@@ -290,8 +444,26 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/favicon.ico", (req, res) => {
-  res.status(204).end();
+  res.sendFile(path.join(__dirname, "icons", "icon-192.png"));
 });
+
+app.get("/manifest.webmanifest", (req, res) => {
+  res.setHeader("Content-Type", "application/manifest+json");
+  res.sendFile(path.join(__dirname, "manifest.webmanifest"));
+});
+
+app.get("/manifest.json", (req, res) => {
+  res.setHeader("Content-Type", "application/manifest+json");
+  res.sendFile(path.join(__dirname, "manifest.webmanifest"));
+});
+
+app.get("/sw.js", (req, res) => {
+  res.setHeader("Content-Type", "application/javascript");
+  res.setHeader("Service-Worker-Allowed", "/");
+  res.sendFile(path.join(__dirname, "sw.js"));
+});
+
+app.use("/icons", express.static(path.join(__dirname, "icons")));
 
 app.get("/style.css", (req, res) => {
   res.sendFile(path.join(__dirname, "style.css"));

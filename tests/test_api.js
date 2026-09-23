@@ -227,7 +227,51 @@ async function runTests() {
   assert.equal(delTempRes.status, 200);
   console.log("✓ Uncirculated book successfully deleted.");
 
-  console.log("\n🎉 ALL 15 AUTOMATED TESTS PASSED SUCCESSFULLY! 🎉\n");
+  // 17. AI Intelligence query endpoint
+  console.log("\n[Test 16] AI Intelligence: Natural Language Query & Recommendations...");
+  // 16a. Unauthenticated check
+  const unauthAi = await fetch(`${BASE_URL}/api/ai/query`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: "Available books" }),
+  });
+  assert.equal(unauthAi.status, 401);
+
+  // 16b. Empty query validation
+  const emptyAi = await fetch(`${BASE_URL}/api/ai/query`, {
+    method: "POST",
+    headers: authHeaders,
+    body: JSON.stringify({ query: "" }),
+  });
+  assert.equal(emptyAi.status, 400);
+
+  // 16c. Realistic query: catalog availability
+  const aiQueryRes = await fetch(`${BASE_URL}/api/ai/query`, {
+    method: "POST",
+    headers: authHeaders,
+    body: JSON.stringify({ query: "Which books on Python or programming are currently available?" }),
+  });
+  assert.equal(aiQueryRes.status, 200);
+  const aiData = await aiQueryRes.json();
+  assert.ok(aiData.answer && typeof aiData.answer === "string");
+  assert.ok(Array.isArray(aiData.referencedBooks));
+  assert.ok(["gemini", "local_intelligence"].includes(aiData.source));
+  console.log("✓ AI query answered successfully via [" + aiData.source + "]. Referenced books count:", aiData.referencedBooks.length);
+
+  // 16d. PWA assets verification
+  console.log("\n[Test 17] PWA Compliance: Manifest and Service Worker Assets...");
+  const manifestRes = await fetch(`${BASE_URL}/manifest.webmanifest`);
+  assert.equal(manifestRes.status, 200);
+  const manifestJson = await manifestRes.json();
+  assert.equal(manifestJson.name, "LIBRA | Digital Library Management System");
+  assert.equal(manifestJson.display, "standalone");
+  assert.ok(manifestJson.icons.length >= 2);
+
+  const swRes = await fetch(`${BASE_URL}/sw.js`);
+  assert.equal(swRes.status, 200);
+  console.log("✓ PWA Manifest and Service Worker validated.");
+
+  console.log("\n🎉 ALL 17 AUTOMATED TESTS PASSED SUCCESSFULLY! 🎉\n");
 }
 
 runTests().catch((err) => {

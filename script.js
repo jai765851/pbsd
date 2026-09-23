@@ -449,9 +449,16 @@ function goTo(sectionId) {
         "book-return": "Book Return",
         "fine-management": "Fine Management",
         "book-availability": "Availability",
+        "ai-assistant": "AI Intelligence",
     };
     pageTitle.textContent = labels[sectionId] || "Library";
     sidebar.classList.remove("open");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    if (backdrop) backdrop.classList.remove("active");
+    if (sectionId === "ai-assistant") {
+        const input = document.getElementById("ai-query-input");
+        if (input) setTimeout(() => input.focus(), 120);
+    }
 }
 
 function escapeHTML(value) {
@@ -608,8 +615,24 @@ navItems.forEach((item) => {
     item.addEventListener("click", () => goTo(item.dataset.section));
 });
 
-menuToggle.addEventListener("click", () => sidebar.classList.add("open"));
-closeSidebar.addEventListener("click", () => sidebar.classList.remove("open"));
+const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+
+menuToggle.addEventListener("click", () => {
+    sidebar.classList.add("open");
+    if (sidebarBackdrop) sidebarBackdrop.classList.add("active");
+});
+
+closeSidebar.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove("active");
+});
+
+if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        sidebarBackdrop.classList.remove("active");
+    });
+}
 
 bookSearch.addEventListener("input", () => {
     document.getElementById("clear-search").classList.toggle("show", Boolean(bookSearch.value));
@@ -753,7 +776,289 @@ window.addEventListener("click", (event) => {
     if (window.innerWidth <= 980 && sidebar.classList.contains("open") &&
         !sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
         sidebar.classList.remove("open");
+        const backdrop = document.getElementById("sidebar-backdrop");
+        if (backdrop) backdrop.classList.remove("active");
     }
+});
+
+// =========================================================
+// AI LIBRARY INTELLIGENCE ASSISTANT
+// =========================================================
+
+const headerAiBtn = document.getElementById("header-ai-btn");
+if (headerAiBtn) {
+    headerAiBtn.addEventListener("click", () => {
+        goTo("ai-assistant");
+    });
+}
+
+const aiForm = document.getElementById("ai-query-form");
+const aiInput = document.getElementById("ai-query-input");
+const aiMessages = document.getElementById("ai-messages");
+const aiLoading = document.getElementById("ai-loading");
+const aiError = document.getElementById("ai-error");
+const aiRetryBtn = document.getElementById("ai-retry-btn");
+const aiClearBtn = document.getElementById("ai-clear-btn");
+const aiSubmitBtn = document.getElementById("ai-submit-btn");
+
+let lastAiQuery = "";
+
+function parseMarkdown(text) {
+    if (!text) return "";
+    let html = escapeHTML(text);
+    // Headings
+    html = html.replace(/^### (.*$)/gim, "<h3>$1</h3>");
+    html = html.replace(/^## (.*$)/gim, "<h3>$1</h3>");
+    html = html.replace(/^# (.*$)/gim, "<h3>$1</h3>");
+    // Bold
+    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    // Italic
+    html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    // Inline code
+    html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+    // Lists and paragraphs
+    const lines = html.split("\n");
+    let inList = false;
+    const formatted = [];
+    for (const line of lines) {
+        if (/^\s*[-*]\s+(.*)/.test(line)) {
+            if (!inList) {
+                formatted.push("<ul>");
+                inList = true;
+            }
+            formatted.push(line.replace(/^\s*[-*]\s+(.*)/, "<li>$1</li>"));
+        } else {
+            if (inList) {
+                formatted.push("</ul>");
+                inList = false;
+            }
+            if (line.trim().length > 0 && !line.startsWith("<h")) {
+                formatted.push(`<p>${line}</p>`);
+            } else {
+                formatted.push(line);
+            }
+        }
+    }
+    if (inList) formatted.push("</ul>");
+    return formatted.join("");
+}
+
+function appendUserMessage(text) {
+    const welcome = aiMessages.querySelector(".ai-welcome-card");
+    if (welcome) welcome.remove();
+
+    const msg = document.createElement("div");
+    msg.className = "ai-message user-message";
+    msg.innerHTML = `
+        <div class="ai-message-avatar">U</div>
+        <div class="ai-message-bubble">
+            <p>${escapeHTML(text)}</p>
+        </div>
+    `;
+    aiMessages.appendChild(msg);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+    if (aiClearBtn) aiClearBtn.classList.remove("hidden");
+}
+
+function appendAssistantMessage(answer, referencedBooks = [], source = "gemini") {
+    const welcome = aiMessages.querySelector(".ai-welcome-card");
+    if (welcome) welcome.remove();
+
+    const msg = document.createElement("div");
+    msg.className = "ai-message assistant-message";
+
+    let booksHtml = "";
+    if (referencedBooks && referencedBooks.length > 0) {
+        booksHtml = `
+            <div class="ai-referenced-books">
+                ${referencedBooks.map((b) => `
+                    <div class="ai-book-card" data-book-id="${b.id}">
+                        <div class="ai-book-card-header">
+                            <span class="ai-book-code">${escapeHTML(b.code || "BOOK")}</span>
+                            <span class="ai-book-status ${b.status}">${escapeHTML(b.status)}</span>
+                        </div>
+                        <div class="ai-book-title">${escapeHTML(b.title)}</div>
+                        <div class="ai-book-author">by ${escapeHTML(b.author)}</div>
+                        <button type="button" class="ai-book-action-btn" data-id="${b.id}">
+                            View Book Record →
+                        </button>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const engineBadge = source === "gemini" ? "✦ Gemini AI Engine" : "◈ Library Intelligence";
+
+    msg.innerHTML = `
+        <div class="ai-message-avatar">✦</div>
+        <div class="ai-message-bubble">
+            ${parseMarkdown(answer)}
+            ${booksHtml}
+            <div class="ai-message-meta">
+                <span>${engineBadge}</span>
+                <span>•</span>
+                <span>${timeStr}</span>
+            </div>
+        </div>
+    `;
+    aiMessages.appendChild(msg);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+
+    // Attach click listeners to book action cards
+    msg.querySelectorAll(".ai-book-action-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const id = Number(btn.dataset.id);
+            if (id) openDetails(id);
+        });
+    });
+}
+
+async function handleAiQuery(queryText) {
+    const query = String(queryText || "").trim();
+    if (!query) return;
+
+    lastAiQuery = query;
+    if (aiError) aiError.classList.add("hidden");
+    appendUserMessage(query);
+    if (aiInput) aiInput.value = "";
+    if (aiSubmitBtn) aiSubmitBtn.disabled = true;
+    if (aiLoading) aiLoading.classList.remove("hidden");
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+
+    try {
+        const result = await api("/api/ai/query", {
+            method: "POST",
+            body: JSON.stringify({ query }),
+        });
+        if (aiLoading) aiLoading.classList.add("hidden");
+        if (aiSubmitBtn) aiSubmitBtn.disabled = false;
+        appendAssistantMessage(result.answer, result.referencedBooks, result.source);
+
+        const statusEl = document.getElementById("ai-engine-status");
+        if (statusEl && result.source) {
+            statusEl.textContent = result.source === "gemini" ? "Gemini 2.5 Flash Connected" : "Local Intelligence Active";
+        }
+    } catch (err) {
+        if (aiLoading) aiLoading.classList.add("hidden");
+        if (aiSubmitBtn) aiSubmitBtn.disabled = false;
+        if (aiError) {
+            aiError.classList.remove("hidden");
+            const errorMsgEl = document.getElementById("ai-error-message");
+            if (errorMsgEl) errorMsgEl.textContent = err.message || "Failed to process query.";
+        }
+    }
+}
+
+if (aiForm) {
+    aiForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (aiInput) handleAiQuery(aiInput.value);
+    });
+}
+
+if (aiRetryBtn) {
+    aiRetryBtn.addEventListener("click", () => {
+        if (lastAiQuery) handleAiQuery(lastAiQuery);
+    });
+}
+
+if (aiClearBtn) {
+    aiClearBtn.addEventListener("click", () => {
+        aiMessages.innerHTML = `
+            <div class="ai-welcome-card">
+                <div class="ai-welcome-icon">✦</div>
+                <div class="ai-welcome-content">
+                    <h3>Welcome to LIBRA Intelligence</h3>
+                    <p>I am your library intelligence copilot, connected directly to your live books catalog, circulation ledger, active loans, and fine records.</p>
+                </div>
+            </div>
+        `;
+        aiClearBtn.classList.add("hidden");
+        if (aiError) aiError.classList.add("hidden");
+    });
+}
+
+document.querySelectorAll(".ai-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+        const query = chip.dataset.query;
+        if (query) {
+            goTo("ai-assistant");
+            handleAiQuery(query);
+        }
+    });
+});
+
+// =========================================================
+// PROGRESSIVE WEB APP (PWA) & SERVICE WORKER
+// =========================================================
+
+let deferredPrompt = null;
+const headerInstallBtn = document.getElementById("header-install-btn");
+const sidebarInstallBtn = document.getElementById("sidebar-pwa-install-button");
+const iosModal = document.getElementById("ios-guide-modal");
+const closeIosBtn = document.getElementById("close-ios-guide");
+const dismissIosBtn = document.getElementById("dismiss-ios-guide");
+const offlineToast = document.getElementById("offline-toast");
+
+// Service worker registration
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").then(
+            (reg) => console.log("[PWA] ServiceWorker registered with scope:", reg.scope),
+            (err) => console.warn("[PWA] ServiceWorker registration failed:", err)
+        );
+    });
+}
+
+const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+
+function showInstallButtons() {
+    if (isStandalone) return;
+    if (headerInstallBtn) headerInstallBtn.classList.remove("hidden");
+    if (sidebarInstallBtn) sidebarInstallBtn.classList.remove("hidden");
+}
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallButtons();
+});
+
+if (isIos && !isStandalone) {
+    showInstallButtons();
+}
+
+async function triggerInstallFlow() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log("[PWA] Install prompt outcome:", outcome);
+        deferredPrompt = null;
+        if (headerInstallBtn) headerInstallBtn.classList.add("hidden");
+        if (sidebarInstallBtn) sidebarInstallBtn.classList.add("hidden");
+    } else if (isIos) {
+        if (iosModal) iosModal.classList.remove("hidden");
+    } else {
+        showToast("To install LIBRA, use your browser's 'Add to Home screen' or 'Install' menu.", "Info");
+    }
+}
+
+if (headerInstallBtn) headerInstallBtn.addEventListener("click", triggerInstallFlow);
+if (sidebarInstallBtn) sidebarInstallBtn.addEventListener("click", triggerInstallFlow);
+if (closeIosBtn) closeIosBtn.addEventListener("click", () => iosModal.classList.add("hidden"));
+if (dismissIosBtn) dismissIosBtn.addEventListener("click", () => iosModal.classList.add("hidden"));
+
+window.addEventListener("online", () => {
+    if (offlineToast) offlineToast.classList.add("hidden");
+    showToast("Connected to live library services.", "Online");
+});
+
+window.addEventListener("offline", () => {
+    if (offlineToast) offlineToast.classList.remove("hidden");
 });
 
 async function boot() {
